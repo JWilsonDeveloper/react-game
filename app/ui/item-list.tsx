@@ -26,7 +26,7 @@ interface ItemListProps {
                     <div key={slot} className="flex items-center gap-4">
                         <h1 className="text-sm font-bold max-w-[40px]">{title}</h1>
                         {player.itemList
-                            .filter(item => item.title === title && item.uses > 0)
+                            .filter(item => item.type === title && item.uses > 0)
                             .map((item, index) => (
                             <MoveButton
                                 key={index}
@@ -34,7 +34,6 @@ interface ItemListProps {
                                 moveClicked={moveClicked}
                                 player={player}
                                 showCost={false}
-                                showContentBelow={true}
                             />
                         ))}
                     </div>

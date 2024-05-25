@@ -119,7 +119,8 @@ export type Stats = {
 export type Move = {
   id: number;
   name: string;
-  type: 'ACTION' | 'ITEM' | 'FLEE';
+  category: 'MOVE' | 'ACTION' | 'ITEM';
+  type: 'MELEE' | 'RANGE' | 'SPELL' | 'FLEE' | 'HP Potion' | 'MP Potion' | 'Scroll';
   cost: number;
   mpCost: number;
   slot: number;
@@ -138,7 +139,6 @@ export type Action = Move & {
 
 export type Item = Action & {
   uses: number;
-  title: 'HP Potion' | 'MP Potion' | 'Scroll';
 }
 
 export type Equipment = {
@@ -149,7 +149,7 @@ export type Equipment = {
   tier: number;
   cost: number;
   slot: number;
-  title: 'Armor' | 'Magic Item'
+  type: 'Armor' | 'Magic Item'
 }
 
 export type EffectRoll = {

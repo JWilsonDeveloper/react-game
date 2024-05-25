@@ -12,6 +12,8 @@ import EquipList from "@/app/ui/equip-list";
 import Equip from "@/app/ui/equip";
 import React from "react";
 import RightArrow from "@/app/ui/right-arrow";
+import ItemTable from "@/app/ui/item-table";
+import ShopTabs from "@/app/ui/shop-tabs";
 
 interface ShoppingProps {
     player : Player;
@@ -21,9 +23,10 @@ interface ShoppingProps {
     setShopping : Function;
     msg : string;
     setMsg : Function;
+    getTier : Function;
 }
 
-export default function Shopping({player, setPlayer, items, setShopping, equipment, msg, setMsg} : ShoppingProps) {
+export default function Shopping({player, setPlayer, items, setShopping, equipment, msg, setMsg, getTier} : ShoppingProps) {
     const [tempPlayer, setTempPlayer] = useState(player);
 
     function doneShopping(){
@@ -69,73 +72,15 @@ export default function Shopping({player, setPlayer, items, setShopping, equipme
     }
 
     return (
-        <div className="flex flex-col w-full text-center gap-4">
-            <div className="flex w-full gap-4">
-                <div className="flex flex-col w-full md:w-1/3 border border-black rounded-lg p-2 items-center">
-                    <h1 className="text-2xl font-bold mb-4">Current Items</h1>
-                    <ItemList player={tempPlayer} actionSelected={() => {}} />
-                </div>
-                <div className="md:w-2/3 border border-black rounded-lg p-2">
-                    <div className="grid grid-cols-3 w-full items-end">
-                        <h1 className="text-2xl font-bold mb-4 col-start-2">Purchase Items</h1>
-                        <h1 className="text-xl font-bold mb-4 col-start-3">GP: {tempPlayer.gp}</h1>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4">
-                        {['HP Potion', 'MP Potion', 'Scroll'].map((title, slot) => (
-                            <div key={slot} className="flex flex-col items-center gap-4">
-                                <h1 className="text-l font-bold">{title}</h1>
-                                {items
-                                .filter(item => item.title === title)
-                                .map((item, index) => (
-                                    <MoveButton
-                                    key={index}
-                                    move={item}
-                                    moveClicked={buyItem}
-                                    player={tempPlayer}
-                                    showCost={true}
-                                    />
-                                ))}
-                            </div>
-                        ))}
-                    </div>
-                </div>
+        <div className="flex flex-col w-full text-center bg-white gap-4 border border-black rounded-lg p-2">
+            <div className="grid grid-cols-3 w-full items-end">
+                <h1 className="text-2xl font-bold mb-4 col-start-2">Purchase Items and Equipment</h1>
+                <h1 className="text-xl font-bold mb-4 col-start-3">GP: {tempPlayer.gp}</h1>
             </div>
-            <div className="flex flex-col w-full text-center gap-4">
-                <div className="flex flex-col w-full text-center gap-4">
-                    <div className="w-full border border-black rounded-lg p-2">
-                        <div className="grid grid-cols-3 w-full items-end">
-                            <h1 className="text-2xl font-bold mb-4 col-start-2">Purchase Equipment</h1>
-                            <h1 className="text-xl font-bold mb-4 col-start-3">GP: {tempPlayer.gp}</h1>
-                        </div>
-                        <div className="grid grid-rows-2 gap-4">
-                            {['Armor', 'Magic Item'].map((title, slot) => (
-                                <div key={slot} className="grid grid-cols-6 items-center gap-4">
-                                    <h1 className="text-sm font-bold" style={{ minWidth: '5rem' }}>{title}</h1>
-                                    {equipment.filter(e => 
-                                        e.slot === slot && 
-                                        tempPlayer.equipList[slot] &&
-                                        e.cost >= tempPlayer.equipList[slot].cost
-                                    ).map((e, index) => (
-                                        <React.Fragment key={index}>
-                                            <Equip
-                                                key={index}
-                                                player={player}
-                                                equipment={e}
-                                                showContentBelow={false}
-                                                showCost={index !== 0}
-                                                equipClicked={buyEquipment}
-                                            />
-                                            {index === 0 && <RightArrow />}
-                                        </React.Fragment>
-                                    ))}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <ShopTabs player={tempPlayer} itemSelected={buyItem} equipSelected={buyEquipment} items={items} equips={equipment} getTier={getTier} />
             </div>
-            
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center">
                 <Button buttonText="Done Shopping!" className="w-1/3" onClick={doneShopping} />
             </div>  
         </div>

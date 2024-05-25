@@ -1,34 +1,28 @@
 'use client'
 
-import React, { useReducer, useState } from "react";
+import React, { useState } from "react";
 import PlayerStats from '@/app/ui/player-stats';
-import EnemyStats from '@/app/ui/enemy-stats';
-
+import EntityStats from '@/app/ui/entity-stats';
 import { Move, Action, Player, Entity } from '@/app/lib/definitions';
-import ActionList from "./action-list";
-import ItemList from "./item-list";
-import {Button} from "@/app/ui/button"
-import EquipList from "./equip-list";
+import {Button} from "@/app/ui/button";
+import AdventureTabs from "@/app/ui/adventure-tabs";
 
 interface AdventureProps {
     player : Player;
     setPlayer : Function;
     enemies : Entity[];
     setGainLevels : Function;
-    getSuccessBonus : Function;
-    getEffectBonus : Function;
     msg : string;
     setMsg : Function;
-    shopping : boolean;
     setShopping : Function;
+    getTier : Function;
+    getEarnedLevel : Function;
 }
 
-export default function Adventure({player, setPlayer, enemies, setGainLevels, getSuccessBonus, getEffectBonus, msg, setMsg, shopping, setShopping}: AdventureProps) {
+export default function Adventure({player, setPlayer, enemies, setGainLevels, msg, setMsg, setShopping, getTier, getEarnedLevel} : AdventureProps) {
     const [enemy, setEnemy] = useState(enemies[0]);
-    const [betweenBattles, setBetweenBattles] = useState(false);
-    const [starting, setStarting] = useState(true);
+    const [adventureState, setAdventureState] = useState('starting');
     const [tempGainLevels, setTempGainLevels] = useState(0);
-    const [levelUp, setLevelUp] = useState(false);
     const hpBoost = getHPBoost(player);
     const mpBoost = getMPBoost(player);
 
@@ -62,7 +56,6 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ge
         }
         return result;
     }
-
     function actionSelected(playerAction : Move){
         let enemyTurn = false;
         let playerEffect = 0;
@@ -85,6 +78,29 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ge
             }
             return false;
         }
+        function getSuccessBonus(move : Move, entity : Entity){
+            let bonus = 0;
+            if(move.successBonus){
+                bonus += move.successBonus;
+            }
+            if(move.skillBonus){
+                if(move.skillBonus.type === "SUCCESS"){
+                    bonus += move.skillBonus.skill === "SPEED" ? move.skillBonus.multiplier * entity.speed : move.skillBonus.multiplier * entity.strength;
+                }
+            }
+            return bonus;
+        }
+        function getEffectBonus(action : Action, entity : Entity){
+            let bonus = 0;
+            bonus += action.effectBonus;
+            if(action.skillBonus){
+                if(action.skillBonus.type === "EFFECT"){
+                    bonus += action.skillBonus.skill === "STRENGTH" ? action.skillBonus.multiplier * entity.strength : action.skillBonus.multiplier * entity.speed;
+                }
+            }
+            return bonus;
+        }
+    
         function getEffect(action : Action, active : Entity){
             let totalEffect= 0;
             if(action.effectRoll){
@@ -187,22 +203,21 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ge
                         }
                     }
                     if(!(tempTempGainLevels > 0)){
-                        setBetweenBattles(true);
+                        setAdventureState('betweenBattles');
                     } 
                     else{
                         setTempGainLevels(tempTempGainLevels);
-                        setLevelUp(true);
+                        setAdventureState('levelUp');
                     } 
                 }
                 else {
                     tempMsg += `\n${player.name} was defeated by ${enemy.name}!`;
+                    //setGameOver(true);
+                    setAdventureState('gameOver');
                 }
             }
             setEnemy(tempEnemy);
             setPlayer(tempPlayer);
-            if(tempGainLevels > 0) {
-                setLevelUp(true);
-            }
             setMsg(tempMsg);
             console.log(tempMsg); 
         }
@@ -273,36 +288,18 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ge
         setMsg(msg + `\n${nextEnemy.name} appeared!`);
       
         // Reset between battles flag
-        setBetweenBattles(false);
+        setAdventureState('');
     }
     
     function startAdventure(){
         nextBattle();
-        setStarting(false);
-    }
-    
-    function getEarnedLevel(currentXP : number){
-        if(currentXP > 750){
-            return 5;
-        }
-        else if(currentXP > 200){
-            return 4;
-        }
-        else if(currentXP > 80){
-            return 3;
-        }
-        else if(currentXP > 15){
-            return 2;
-        }
-        else{
-            return 1;
-        }
+        setAdventureState('');
     }
 
     return (
-        <div className="relative flex flex-col gap-4 w-full bg-white text-center">
-            {betweenBattles && !levelUp && (
-                <div className="absolute inset-x-0 inset-y-0 flex justify-center items-center bg-white bg-opacity-75">
+        <div className="relative flex flex-col gap-4 w-full text-center bg-black rounded-lg">
+            {adventureState === 'betweenBattles' && (
+                <div className="absolute inset-x-0 inset-y-0 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
                     <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">You Survived!</h1>
                     <Button buttonText="Next Battle!" className="w-full mb-4" onClick={nextBattle} />
@@ -310,15 +307,15 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ge
                     </div>
                 </div>
             )}
-            {starting && (
-                <div className="absolute inset-x-0 inset-y-0 flex justify-center items-center bg-white bg-opacity-75">
+            {adventureState === 'starting' && (
+                <div className="absolute inset-x-0 inset-y-0 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
                     <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">Time to adventure!</h1>
                     <Button buttonText="Next Battle!" className="w-full" onClick={startAdventure} />
                     </div>
                 </div>
             )}
-            {levelUp && getEarnedLevel(player.xp)< 5 && (
+            {adventureState === 'levelUp' && getEarnedLevel(player.xp)< 5 && (
                 <div className="absolute inset-x-0 inset-y-0 flex justify-center items-center bg-white bg-opacity-75">
                     <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">You reached enough XP to level up!</h1>
@@ -326,30 +323,30 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ge
                     </div>
                 </div>
             )}
-            {levelUp && getEarnedLevel(player.xp) >= 5 && (
+            {adventureState === 'levelUp' && getEarnedLevel(player.xp) >= 5 && (
                 <div className="absolute inset-x-0 inset-y-0 flex justify-center items-center bg-white bg-opacity-75">
                     <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">You reached level 5! You win!</h1>
                     </div>
                 </div>
             )}
-            <div className="flex w-full gap-4">
-                <div className="flex-col w-full md:w-1/3 border border-black rounded-lg p-2">
-                    <h1 className="text-xl font-bold mb-4">Attacks</h1>
-                    <ActionList player={player} actionSelected={actionSelected} />
-                </div>
-                <div className="flex flex-col md:w-1/3 justify-center">
-                    <PlayerStats player={player}/>
-                    {!starting && <EnemyStats enemy={enemy} />}
-                </div>
-                <div className="flex w-full gap-4 md:w-1/3">
-                    <div className="w-1/3 border border-black rounded-lg p-2">
-                        <h1 className="text-xl font-bold">Equipment</h1>
-                        <EquipList player={player} actionSelected={() => {}} />
+            {adventureState === 'gameOver' && (
+                <div className="absolute inset-x-0 inset-y-0 flex justify-center items-center bg-white bg-opacity-75">
+                    <div className="flex-col w-1/3">
+                    <h1 className="text-xl font-bold mb-4">{player.name} was defeated by {enemy.name}</h1>
                     </div>
-                    <div className="w-2/3 border border-black rounded-lg p-2">
-                        <h1 className="text-xl font-bold">Items</h1>
-                        <ItemList player={player} actionSelected={actionSelected} />
+                </div>
+            )}
+            <div className="flex flex-col md:flex-row w-full gap-4">
+                <div className="flex-col border-black md:w-2/3 rounded-lg h-full">
+                    <AdventureTabs player={player} actionSelected={actionSelected} getTier={getTier}/>
+                </div>
+                <div className="flex flex-cols-1 gap-4 md:w-1/3 md:flex-cols-2 rounded-lg justify-center">
+                    <div className="bg-white rounded-lg">
+                        <EntityStats entity={player}/>
+                    </div>
+                    <div className="bg-white rounded-lg">
+                        {adventureState!=='starting' && <EntityStats entity={enemy}/>}
                     </div>
                 </div>
             </div>

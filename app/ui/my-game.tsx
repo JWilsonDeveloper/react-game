@@ -1,5 +1,5 @@
 import {Button} from '@/app/ui/button';
-import { Move, Action, Player, Entity, Item, Equipment } from '../lib/definitions';
+import { Move, Player, Entity, Item, Equipment } from '../lib/definitions';
 import Adventure from '@/app/ui/adventure';
 import Leveling from '@/app/ui/leveling';
 import { useState } from 'react';
@@ -22,45 +22,6 @@ export default function MyGame({ basePlayer, enemies, items, moves, equipment}: 
     const [msg, setMsg] = useState("Welcome to monster fight!");
     const [shopping, setShopping] = useState(false);
 
-    function getSuccessBonus(move : Move, entity : Entity){
-        let bonus = 0;
-        if(move.successBonus){
-            bonus += move.successBonus;
-        }
-        if(move.skillBonus){
-            if(move.skillBonus.type === "SUCCESS"){
-                bonus += move.skillBonus.skill === "SPEED" ? move.skillBonus.multiplier * entity.speed : move.skillBonus.multiplier * entity.strength;
-            }
-        }
-        return bonus;
-    }
-
-    function getEffectBonus(action : Action, entity : Entity){
-        let bonus = 0;
-        bonus += action.effectBonus;
-        if(action.skillBonus){
-            if(action.skillBonus.type === "EFFECT"){
-                bonus += action.skillBonus.skill === "STRENGTH" ? action.skillBonus.multiplier * entity.strength : action.skillBonus.multiplier * entity.speed;
-            }
-        }
-        return bonus;
-    }
-
-    function getNextLevelXP(currentXP : number){
-        if(currentXP < 15){
-            return 15;
-        }
-        else if(currentXP < 80){
-            return 80;
-        }
-        else if(currentXP < 200){
-            return 200;
-        }
-        else{
-            return 750;
-        }
-    }
-
     function getEarnedLevel(currentXP : number){
         if(currentXP > 750){
             return 5;
@@ -79,11 +40,36 @@ export default function MyGame({ basePlayer, enemies, items, moves, equipment}: 
         }
     }
 
+    function getTier(move : Move){
+        let buttonClass = "";
+        switch (move.tier) {
+            case 0:
+                buttonClass = "bg-gray-300";
+                break;
+            case 1:
+                buttonClass = "bg-green-300";"bg-blue-300";
+                break;
+            case 2:
+                buttonClass = "bg-blue-300";"bg-indigo-300";
+                break;
+            case 3:
+                buttonClass = "bg-indigo-300";"bg-violet-300";
+                break;
+            case 4:
+                buttonClass = "bg-violet-300";
+                break;
+            default:
+                buttonClass = "bg-white";
+                break;
+        }
+        return buttonClass;
+    }
+
     return (
         <div className="w-full flex flex-col">
-            <div className="flex gap-4 mb-4 w-full justify-center">
+            <div className="flex flex-col md:flex-row gap-4 mb-4 w-full justify-center">
                 <div className="flex flex-col w-full md:w-1/3 justify-center">
-                    <XPBar player={player} getNextLevelXP={getNextLevelXP} getEarnedLevel={getEarnedLevel} />
+                    <XPBar player={player} getEarnedLevel={getEarnedLevel} />
                 </div>
                 <div className="flex flex-col w-full md:w-2/3">
                     <Message text={msg}/>
@@ -102,6 +88,7 @@ export default function MyGame({ basePlayer, enemies, items, moves, equipment}: 
                         setShopping={setShopping}
                         msg={msg}
                         setMsg={setMsg}
+                        getTier={getTier}
                     />
                 </div> 
             : 
@@ -116,6 +103,7 @@ export default function MyGame({ basePlayer, enemies, items, moves, equipment}: 
                             moves={moves}
                             msg={msg}
                             setMsg={setMsg}
+                            getTier={getTier}
                         />
                     </div>
                 : 
@@ -125,12 +113,11 @@ export default function MyGame({ basePlayer, enemies, items, moves, equipment}: 
                             setPlayer={setPlayer}
                             enemies={enemies}
                             setGainLevels={setGainLevels}
-                            getSuccessBonus={getSuccessBonus}
-                            getEffectBonus={getEffectBonus}
                             msg={msg}
                             setMsg={setMsg}
-                            shopping={shopping}
                             setShopping={setShopping}
+                            getTier={getTier}
+                            getEarnedLevel={getEarnedLevel}
                         />
                     </div>
             }

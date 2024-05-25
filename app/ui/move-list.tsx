@@ -6,12 +6,10 @@ import ItemList from './item-list';
 interface MoveListProps {
     player: Player;
     actionSelected: Function;
-    getSuccessBonus : Function;
-    getEffectBonus : Function;
   }
   
   
-  export default function MoveList({ player, actionSelected, getSuccessBonus, getEffectBonus}: MoveListProps) {
+  export default function MoveList({ player, actionSelected}: MoveListProps) {
     return (
         <div className="flex-grow grid grid-cols-1 gap-4">
             <div>

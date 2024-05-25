@@ -23,10 +23,8 @@ interface EquipListProps {
                             .map((e, index) => (
                                 <Equip
                                     key={index}
-                                    player={player}
                                     showCost={false}
                                     equipment={e}
-                                    showContentBelow={true}
                                     equipClicked={() => {}}
                                 />
                         ))}

@@ -1,6 +1,5 @@
 import { Entity, Player, Move, Action, Item, EffectRoll } from "@/app/lib/definitions";
 import {Button} from "@/app/ui/button";
-import { get } from "http";
 
 interface MoveButtonProps {
   player : Player;
@@ -8,10 +7,9 @@ interface MoveButtonProps {
   moveClicked : Function;
   className? : string;
   showCost : boolean;
-  showContentBelow? : boolean;
 }
 
-export default function MoveButton({ move, moveClicked, player, className, showCost, showContentBelow} : MoveButtonProps) {
+export default function MoveButton({ move, moveClicked, player, className, showCost} : MoveButtonProps) {
   const tieredClass = className ? className + " " + getClass(move) : getClass(move); 
 
   function getAttackBonus(attack : Move, entity : Entity){
@@ -46,7 +44,7 @@ export default function MoveButton({ move, moveClicked, player, className, showC
     }
   }
   function getUses(move : Move){
-    if(move.type === 'ITEM'){
+    if(move.category === 'ITEM'){
       const item : Item = move as Item;
       return item.uses;
     }
@@ -82,21 +80,21 @@ export default function MoveButton({ move, moveClicked, player, className, showC
       <div className="flex flex-cols-2 gap-1 min-w-[70px]">
         <div className="flex flex-cols-2 gap-1">
           <div className="text-right">
-            {move.type !== 'ITEM' ? <div>Success:</div> : ""}
+            {move.category !== 'ITEM' ? <div>Success:</div> : ""}
             <div>Effect:</div>
-            {move.type === 'ITEM' ? <div>Uses:</div> : ""}
+            {move.category === 'ITEM' ? <div>Uses:</div> : ""}
             {showCost ? <div>Cost:</div> : ""}
             {move.mpCost > 0 ? <div>MP Cost:</div> : ""}
           </div>
           <div className="text-left">
-            {move.type !== 'ITEM' ? <div>{"+" + getAttackBonus(move, player)}</div> : ""}
+            {move.category !== 'ITEM' ? <div>{"+" + getAttackBonus(move, player)}</div> : ""}
             <div>{calculateEffect(move, player) != null ? calculateEffect(move, player) : "N/A"}</div>
-            {move.type === 'ITEM' ? <div>{getUses(move)}</div> : ""}
+            {move.category === 'ITEM' ? <div>{getUses(move)}</div> : ""}
             {move.mpCost > 0 ? <div>{move.mpCost}</div> : ""}
             <div>
               {showCost ? move.cost : ""}
-              {showCost && move.type === 'ITEM' ? " GP" : ""}
-              {showCost && (move.type === 'ACTION' || move.type === 'FLEE') ? " AP" : ""}
+              {showCost && move.category === 'ITEM' ? " GP" : ""}
+              {showCost && (move.category === 'ACTION' || move.type === 'FLEE') ? " AP" : ""}
             </div>
           </div>
         </div>
