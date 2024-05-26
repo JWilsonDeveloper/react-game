@@ -62,10 +62,10 @@ export default function ActionTable({ actions, actionClicked, entity, getTier, s
       <table className="table-auto w-full border-collapse border border-gray-200 bg-white">
         <thead>
           <tr>
+            <th className="border border-gray-200 p-2 text-xs md:text-sm">Type</th>
             <th className="border border-gray-200 p-2 text-xs md:text-sm">Action</th>
             {showCost && <th className="border border-gray-200 p-2 text-xs md:text-sm">Cost</th>}
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">Type</th>
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">Success Bonus</th>
+            <th className="border border-gray-200 p-2 text-xs md:text-sm">SB</th>
             <th className="border border-gray-200 p-2 text-xs md:text-sm">Effect</th>
             <th className="border border-gray-200 p-2 text-xs md:text-sm">Stat</th>
             <th className="border border-gray-200 p-2 text-xs md:text-sm">Target</th>
@@ -75,6 +75,7 @@ export default function ActionTable({ actions, actionClicked, entity, getTier, s
         <tbody>
           {sortedActions.map((action, index) => (
             <tr key={index} className={getTier(action)}>
+              <td className="border border-gray-200 p-2 text-xs md:text-sm">{action.type}</td>
               <td className="border border-gray-200 p-2 text-xs md:text-sm">
                 <Button
                   onClick={() => actionClicked(action)}
@@ -83,8 +84,7 @@ export default function ActionTable({ actions, actionClicked, entity, getTier, s
                 />
               </td>
               {showCost && <td className="border border-gray-200 p-2 text-xs md:text-sm">{action.cost + " AP"}</td>}
-              <td className="border border-gray-200 p-2 text-xs md:text-sm">{action.type}</td>
-              <td className="border border-gray-200 p-2 text-xs md:text-sm">{getSuccessBonus(action, entity)}</td>
+              <td className="border border-gray-200 p-2 text-xs md:text-sm">{"+" + getSuccessBonus(action, entity)}</td>
               <td className="border border-gray-200 p-2 text-xs md:text-sm">{isAction(action) ? calculateEffect(action, entity) : 'x'}</td>
               <td className="border border-gray-200 p-2 text-xs md:text-sm">{isAction(action) ? action.targetStat : 'x'}</td>
               <td className="border border-gray-200 p-2 text-xs md:text-sm">{isAction(action) ? action.target : 'x'}</td>

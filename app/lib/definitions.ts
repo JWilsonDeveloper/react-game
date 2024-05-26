@@ -165,3 +165,16 @@ export type SkillBonus = {
   multiplier: number;
   type: 'SUCCESS' | 'EFFECT';
 }
+
+export type Turn = {
+  entityName: string;
+  moveString: string;
+  resultString: string;
+  target?: 'SELF' | 'OTHER';
+  minimum?: number;
+  bonus?: number;
+  roll?: number;
+  total?: number;
+  success?: boolean;
+  effect?: number;
+}

@@ -37,40 +37,42 @@ export default function ItemTable({ items, itemClicked, entity, getTier, showCos
 
   return (
     <div className="overflow-x-auto">
-      <table className="table-auto w-full border-collapse border border-gray-200 bg-white">
-        <thead>
-          <tr>
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">Item</th>
-            {showCost && <th className="border border-gray-200 p-2 text-xs md:text-sm">Cost</th>}
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">Uses</th>
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">Success Bonus</th>
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">Effect</th>
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">Stat</th>
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">Target</th>
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">MP Cost</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredItems.map((item, index) => (
-            <tr key={index} className={getTier(item)}>
-              <td className="border border-gray-200 p-2 text-xs md:text-sm">
-                <Button
-                  onClick={() => itemClicked(item)}
-                  className="w-full bg-blue-500 text-white rounded text-xs md:text-sm"
-                  buttonText={item.name}
-                />
-              </td>
-              {showCost && <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.cost + " GP"}</td>}
-              <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.uses}</td>
-              <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.target === "OTHER" ? item.successBonus : "x"}</td>
-              <td className="border border-gray-200 p-2 text-xs md:text-sm">{calculateEffect(item, entity)}</td>
-              <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.targetStat}</td>
-              <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.target}</td>
-              <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.mpCost}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        <table className="table-auto w-full border-collapse border border-gray-200 bg-white">
+            <thead>
+                <tr>
+                    <th className="border border-gray-200 p-2 text-xs md:text-sm">Type</th>
+                    <th className="border border-gray-200 p-2 text-xs md:text-sm">Item</th>
+                    {showCost && <th className="border border-gray-200 p-2 text-xs md:text-sm">Cost</th>}
+                    <th className="border border-gray-200 p-2 text-xs md:text-sm">Uses</th>
+                    <th className="border border-gray-200 p-2 text-xs md:text-sm">Success Bonus</th>
+                    <th className="border border-gray-200 p-2 text-xs md:text-sm">Effect</th>
+                    <th className="border border-gray-200 p-2 text-xs md:text-sm">Stat</th>
+                    <th className="border border-gray-200 p-2 text-xs md:text-sm">Target</th>
+                    <th className="border border-gray-200 p-2 text-xs md:text-sm">MP Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {filteredItems.map((item, index) => (
+                    <tr key={index} className={getTier(item)}>
+                        <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.type}</td>
+                        <td className="border border-gray-200 p-2 text-xs md:text-sm">
+                            <Button
+                            onClick={() => itemClicked(item)}
+                            className="w-full bg-blue-500 text-white rounded text-xs md:text-sm"
+                            buttonText={item.name}
+                            />
+                        </td>
+                        {showCost && <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.cost + " GP"}</td>}
+                        <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.uses}</td>
+                        <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.target === "OTHER" ? "+" + item.successBonus : "x"}</td>
+                        <td className="border border-gray-200 p-2 text-xs md:text-sm">{calculateEffect(item, entity)}</td>
+                        <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.targetStat}</td>
+                        <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.target}</td>
+                        <td className="border border-gray-200 p-2 text-xs md:text-sm">{item.mpCost}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
     </div>
   );
 }

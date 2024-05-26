@@ -3,9 +3,11 @@
 import React, { useState } from "react";
 import PlayerStats from '@/app/ui/player-stats';
 import EntityStats from '@/app/ui/entity-stats';
-import { Move, Action, Player, Entity } from '@/app/lib/definitions';
+import { Move, Action, Player, Entity, Turn } from '@/app/lib/definitions';
 import {Button} from "@/app/ui/button";
 import AdventureTabs from "@/app/ui/adventure-tabs";
+import CombatEntity from "@/app/ui/combat-entity";
+import CombatRound from "./combat-round";
 
 interface AdventureProps {
     player : Player;
@@ -22,6 +24,10 @@ interface AdventureProps {
 export default function Adventure({player, setPlayer, enemies, setGainLevels, msg, setMsg, setShopping, getTier, getEarnedLevel} : AdventureProps) {
     const [enemy, setEnemy] = useState(enemies[0]);
     const [adventureState, setAdventureState] = useState('starting');
+    const [showOverlay, setShowOverlay] = useState(false);
+    const [overlayText, setOverlayText] = useState("");
+    const [playerTurn, setPlayerTurn] = useState({entityName : "", moveString: "", resultString: ""});
+    const [enemyTurn, setEnemyTurn] = useState({entityName : "", moveString: "", resultString: ""});
     const [tempGainLevels, setTempGainLevels] = useState(0);
     const hpBoost = getHPBoost(player);
     const mpBoost = getMPBoost(player);
@@ -57,7 +63,7 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
         return result;
     }
     function actionSelected(playerAction : Move){
-        let enemyTurn = false;
+        let isEnemyTurn = false;
         let playerEffect = 0;
         let enemyEffect = 0;
         let escaped = false;
@@ -65,17 +71,27 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
         let tempPlayer = player;
         let tempEnemy = enemy;
         let tempTempGainLevels = 0;
+        let tempPlayerTurn : Turn = {entityName : player.name, moveString: "", resultString: ""};
+        let tempEnemyTurn : Turn = {entityName : enemy.name, moveString: "", resultString: ""};
 
         function isActionSuccess(action : Action, active : Entity, target : Entity){
             if(action.target === 'SELF'){
                 return true;
             }
             const successBonus = getSuccessBonus(action, active);
-            const atkRoll = Math.floor(Math.random() * 20) + 1 + successBonus;
+            const atkRoll = Math.floor(Math.random() * 20) + 1;
+            const total = atkRoll + successBonus;
             const defense = target === player ? getDefense(player) : 10 + enemy.speed + enemy.armor;
-            if(atkRoll >= defense){
+            const turn : Turn = active === player ? tempPlayerTurn : tempEnemyTurn;
+            turn.minimum = defense;
+            turn.bonus = successBonus;
+            turn.roll = atkRoll;
+            turn.total = total;
+            if(total >= defense){
+                turn.success = true;
                 return true;
             }
+            turn.success = false;
             return false;
         }
         function getSuccessBonus(move : Move, entity : Entity){
@@ -100,7 +116,6 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
             }
             return bonus;
         }
-    
         function getEffect(action : Action, active : Entity){
             let totalEffect= 0;
             if(action.effectRoll){
@@ -112,12 +127,21 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
             return action.statIncrease ? totalEffect : -totalEffect;
         }
         function tryRunAway(move : Move, active : Entity, nonActive : Entity){
-            const escapeRoll = Math.floor(Math.random() * 20) + 1 + getSuccessBonus(move, active);
+            const turn : Turn = active === player ? tempPlayerTurn : tempEnemyTurn;
             const catchRoll = Math.floor(Math.random() * 20) + 1 + nonActive.speed;
-            if(escapeRoll > catchRoll) {
+            const escapeRoll = Math.floor(Math.random() * 20) + 1;
+            const bonus = getSuccessBonus(move, active);
+            const total = escapeRoll + bonus;
+            turn.minimum = catchRoll;
+            turn.bonus = bonus;
+            turn.roll = escapeRoll;
+            turn.total = total;
+            if(total > catchRoll) {
+                turn.success = true;
                 return true;
             }
             else {
+                turn.success = false;
                 return false;
             }
         }
@@ -131,21 +155,31 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
         function doAction(action : Action, active : Entity){
             const target : Entity = (action.target === 'OTHER' && active === player) || (action.target === 'SELF' && active === enemy) ? enemy : player;
             let effect = 0;
+            const turn : Turn = active === player ? tempPlayerTurn : tempEnemyTurn;
+            turn.target = action.target;
             tempMsg += `\n${active.name} used ${action.name}...`;
-            if(action.effectRoll && isActionSuccess(action, active, target)){
+            turn.moveString = `${active.name} used ${action.name}...`;
+            turn.effect = 0;
+            const success = isActionSuccess(action, active, target);
+            if(success){
                 effect = getEffect(action, active);
+                turn.effect = effect;
                 if(effect > 0){
+                    turn.resultString = `${target.name}'s ${action.targetStat} was increased by ${effect}!`
                     tempMsg += `\n${target.name}'s ${action.targetStat} was increased by ${effect}!`;
                 }
                 else if(effect < 0){
+                    turn.resultString = `${target.name}'s ${action.targetStat} was reduced by ${Math.abs(effect)}!`;
                     tempMsg += `\n${target.name}'s ${action.targetStat} was reduced by ${Math.abs(effect)}!`;
                 }
                 else {
+                    turn.resultString = `\nNo effect!`;
                     tempMsg += `\nNo effect!`;
                 }
             }
             else{
                 tempMsg += `\n${active.name}'s attack missed!`;
+                turn.resultString = `${active.name}'s attack missed!`;
             }
             return effect;
         }
@@ -173,7 +207,6 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
                 tempEnemy = {...tempEnemy, currMP: (tempEnemy.currMP - action.mpCost)};
                 if(action.targetStat === 'HP'){
                     tempPlayer = {...tempPlayer, currHP: (tempPlayer.currHP + effect)};
-                    console.log("TEMPPLAYERHP: " + tempPlayer.currHP);
                 }
                 else if(action.targetStat === 'MP'){
                     tempPlayer = {...tempPlayer, currMP: (tempPlayer.currMP + effect)};
@@ -212,33 +245,39 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
                 }
                 else {
                     tempMsg += `\n${player.name} was defeated by ${enemy.name}!`;
-                    //setGameOver(true);
                     setAdventureState('gameOver');
                 }
             }
+            setPlayerTurn(tempPlayerTurn);
+            setEnemyTurn(tempEnemyTurn);
+            setShowOverlay(true);
             setEnemy(tempEnemy);
             setPlayer(tempPlayer);
             setMsg(tempMsg);
-            console.log(tempMsg); 
+            console.log(tempMsg);
         }
 
         if(player.currHP + hpBoost> 0){
             // Player Turn
             if(hasEnoughMP(playerAction, player)){
                 if(playerAction.type === "FLEE"){
+                    tempPlayerTurn.moveString = `${player.name} used ${playerAction.name}!`;
+                    tempMsg += `\n${player.name} used ${playerAction.name}!`
                     escaped = tryRunAway(playerAction, player, enemy);
                     if(escaped){
+                        tempPlayerTurn.resultString = `${player.name} escaped from ${enemy.name}!`;
                         tempMsg += `\n${player.name} escaped from ${enemy.name}!`;
                     }
                     else{
+                        tempPlayerTurn.resultString = `${player.name} was not able to get away!`;
                         tempMsg += `\n${player.name} was not able to get away!`;
-                        enemyTurn = true;
+                        isEnemyTurn = true;
                     }
                 }
                 else{
                     playerEffect = doAction(playerAction as Action, player);
                     handlePlayerEffect(playerAction as Action, playerEffect);
-                    enemyTurn = true;
+                    isEnemyTurn = true;
                 }
             }
             else{
@@ -248,8 +287,8 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
             console.log(tempMsg);
 
             // Enemy Turn
-            if(enemyTurn && tempEnemy.currHP > 0){
-                setTimeout(() =>{
+            if(isEnemyTurn && tempEnemy.currHP > 0){
+                //setTimeout(() =>{
                     let randomIndex = Math.floor(Math.random() * enemy.actionList.length);
                     let enemyAttack = enemy.actionList[randomIndex];
                     while(!hasEnoughMP(enemyAttack, enemy)){
@@ -259,7 +298,7 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
                     enemyEffect = doAction(enemyAttack as Action, enemy);
                     handleEnemyEffect(enemyAttack as Action, enemyEffect);
                     handleResult(); 
-                }, 100);
+                //}, 100);
             }
             else{
                 handleResult();
@@ -299,59 +338,71 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
     return (
         <div className="relative flex flex-col gap-4 w-full text-center bg-black rounded-lg">
             {adventureState === 'betweenBattles' && (
-                <div className="absolute inset-x-0 inset-y-0 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
-                    <div className="flex-col w-1/3">
+                <div className="absolute inset-0 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
+                <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">You Survived!</h1>
                     <Button buttonText="Next Battle!" className="w-full mb-4" onClick={nextBattle} />
                     <Button buttonText="Go Shopping!" className="w-full" onClick={() => setShopping(true)} />
-                    </div>
+                </div>
                 </div>
             )}
             {adventureState === 'starting' && (
-                <div className="absolute inset-x-0 inset-y-0 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
-                    <div className="flex-col w-1/3">
+                <div className="absolute inset-0 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
+                <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">Time to adventure!</h1>
                     <Button buttonText="Next Battle!" className="w-full" onClick={startAdventure} />
-                    </div>
+                </div>
                 </div>
             )}
-            {adventureState === 'levelUp' && getEarnedLevel(player.xp)< 5 && (
-                <div className="absolute inset-x-0 inset-y-0 flex justify-center items-center bg-white bg-opacity-75">
-                    <div className="flex-col w-1/3">
+            {adventureState === 'levelUp' && getEarnedLevel(player.xp) < 5 && (
+                <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-75">
+                <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">You reached enough XP to level up!</h1>
                     <Button buttonText="Level up!" className="w-full" onClick={() => setGainLevels(tempGainLevels)} />
-                    </div>
+                </div>
                 </div>
             )}
             {adventureState === 'levelUp' && getEarnedLevel(player.xp) >= 5 && (
-                <div className="absolute inset-x-0 inset-y-0 flex justify-center items-center bg-white bg-opacity-75">
-                    <div className="flex-col w-1/3">
+                <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-75">
+                <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">You reached level 5! You win!</h1>
-                    </div>
+                </div>
                 </div>
             )}
             {adventureState === 'gameOver' && (
-                <div className="absolute inset-x-0 inset-y-0 flex justify-center items-center bg-white bg-opacity-75">
-                    <div className="flex-col w-1/3">
+                <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-75">
+                <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">{player.name} was defeated by {enemy.name}</h1>
-                    </div>
+                </div>
                 </div>
             )}
             <div className="flex flex-col md:flex-row w-full gap-4">
                 <div className="flex-col border-black md:w-2/3 rounded-lg h-full">
-                    <AdventureTabs player={player} actionSelected={actionSelected} getTier={getTier}/>
+                    <AdventureTabs player={player} actionSelected={actionSelected} getTier={getTier} />
                 </div>
                 <div className="flex flex-cols-1 gap-4 md:w-1/3 md:flex-cols-2 rounded-lg justify-center">
                     <div className="bg-white rounded-lg">
-                        <EntityStats entity={player}/>
+                        <EntityStats entity={player} />
                     </div>
                     <div className="bg-white rounded-lg">
-                        {adventureState!=='starting' && <EntityStats entity={enemy}/>}
+                        {adventureState !== 'starting' && <EntityStats entity={enemy} />}
                     </div>
                 </div>
             </div>
+            {showOverlay && (
+                <div
+                    className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75"
+                    style={{ whiteSpace: "pre-wrap" }} // Ensure new lines are preserved
+                    >
+                    <div className="flex-col text-center">
+                        <h1 className="text-xl font-bold mb-4">{overlayText}</h1>
+                        <CombatRound player={player} enemy={enemy} playerTurn={playerTurn} enemyTurn={enemyTurn} setShowOverlay={setShowOverlay}/>
+                    </div>
+                </div>
+            )}
         </div>
-    );
+      );
+      
     
     
     

@@ -18,7 +18,7 @@ export default function ShopTabs({ player, itemSelected, equipSelected, items, e
   const [activeTab2, setActiveTab2] = useState('purchase-items');
 
   return (
-    <div className="flex flex-col md:flex-row w-full gap-4 ">
+    <div className="flex flex-col lg:flex-row w-full gap-4 ">
       <div className="flex-col w-full border border-black rounded-lg p-2 bg-gray-200">
         <div className="bg-white h-full">
             <div className="flex border-b border-gray-200 bg-white flex-wrap">
