@@ -115,13 +115,13 @@ export default function Leveling({
           <StatTable player={player} tempPlayer={tempPlayer} />
         </div>
         <div className="flex flex-col w-full items-center justify-center bg-white border border-black rounded-lg p-2">
-            <div className="grid grid-cols-3 w-full items-end">
-            <h1 className="text-2xl font-bold mb-4 col-start-2">
-                Purchase Attacks
-            </h1>
-            <h1 className="text-xl font-bold mb-4 col-start-3">
-                AP: {tempPlayer.ap}
-            </h1>
+            <div className="flex flex-col w-full items-center">
+                <h1 className="text-2xl font-bold mb-4 col-start-2">
+                    Purchase Actions
+                </h1>
+                <h1 className="text-xl font-bold mb-4 col-start-3">
+                    AP: {tempPlayer.ap}
+                </h1>
             </div>
             <LevelingTabs
             tempPlayer={tempPlayer}

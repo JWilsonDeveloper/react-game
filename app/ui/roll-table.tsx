@@ -31,34 +31,44 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
     const interval = 60;
     let startTime = 300;
 
-    const actions = [
-      () => setShowMove(true),
-      () => setShowLabel1(true),
-      () => setShowLabel2(true),
-      () => setShowLabel3(true),
-      () => setShowLabel4(true),
-      () => setShowField1(true),
-      () => setShowField2(true),
-      () => setShowField3(true),
-      () => setShowField4(true),
-      () => setShowResult(true),
-      () => triggerOverlay(),
-      () => triggerFunction(),
-    ];
-
-    const longIntervals = [5, 6, 7, 8, 9, 10, 11];
-
-    actions.forEach((action, index) => {
-        let timeout = startTime + interval * index;
-        if (longIntervals.includes(index)) {
-            let i = longIntervals.indexOf(index) + 1;
-            timeout += interval * 4 * i;
-            if(isLast && index === actions.length - 1){
-              timeout += interval * 4;
-            }
-        }
-        setTimeout(action, timeout);
-    });
+    if(hasRoll){
+      const actions = [
+        () => setShowMove(true),
+        () => setShowLabel1(true),
+        () => setShowLabel2(true),
+        () => setShowLabel3(true),
+        () => setShowLabel4(true),
+        () => setShowField1(true),
+        () => setShowField2(true),
+        () => setShowField3(true),
+        () => setShowField4(true),
+        () => setShowResult(true),
+        () => triggerOverlay(),
+        () => triggerFunction(),
+      ];
+  
+      const longIntervals = [5, 6, 7, 8, 9, 10, 11];
+  
+      actions.forEach((action, index) => {
+          let timeout = startTime + interval * index;
+          if (longIntervals.includes(index)) {
+              let i = longIntervals.indexOf(index) + 1;
+              timeout += interval * 4 * i;
+              if(isLast && index === actions.length - 1){
+                timeout += interval * 4;
+              }
+          }
+          setTimeout(action, timeout);
+      });
+    }
+    else{
+      setTimeout(() => {setShowMove(true)}, startTime);
+      setTimeout(() => {setShowResult(true)}, startTime + interval * 4);
+      setTimeout(() => {triggerOverlay()}, startTime + interval * 8);
+      const triggerTimeout = isLast ? startTime + interval * 16 : startTime + interval * 12;
+      setTimeout(() => {triggerFunction()}, triggerTimeout);
+    }
+    
   }, [turn, triggerFunction, hasRoll]);
 
   function triggerOverlay() {
@@ -78,7 +88,6 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
       else{
         setOtherOverlay(turn.effect);
       }
-      
     }
   };
 
@@ -117,7 +126,7 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
                           <tr className="bg-gray-200">
                               <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
                                   <span className={showLabel2 ? '' : 'invisible'}>
-                                      SB
+                                      Success Bonus
                                   </span>
                               </td>
                               <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">

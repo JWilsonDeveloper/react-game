@@ -157,8 +157,8 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
             let effect = 0;
             const turn : Turn = active === player ? tempPlayerTurn : tempEnemyTurn;
             turn.target = action.target;
-            tempMsg += `\n${active.name} used ${action.name}...`;
-            turn.moveString = `${active.name} used ${action.name}...`;
+            tempMsg += `\n${active.name} used ${action.name}!`;
+            turn.moveString = `${active.name} used ${action.name}!`;
             turn.effect = 0;
             const success = isActionSuccess(action, active, target);
             if(success){

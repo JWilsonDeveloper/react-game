@@ -60,6 +60,7 @@ export default function AdventureTabs({ player, actionSelected, getTier }: Adven
               entity={player}
               getTier={getTier}
               showCost={false}
+              hideUseless={true}
             />
           )}
           {activeTab === 'equipment' && (

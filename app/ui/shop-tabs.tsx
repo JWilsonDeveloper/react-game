@@ -43,6 +43,7 @@ export default function ShopTabs({ player, itemSelected, equipSelected, items, e
                         entity={player}
                         getTier={getTier}
                         showCost={false}
+                        hideUseless={true}
                     />
                 )}
                 {activeTab === 'current-equipment' && (

@@ -30,10 +30,11 @@ interface ItemTableProps {
   entity: Entity;
   getTier: Function;
   showCost: boolean;
+  hideUseless?: boolean;
 }
 
-export default function ItemTable({ items, itemClicked, entity, getTier, showCost }: ItemTableProps) {
-  const filteredItems = items.filter(item => item.uses > 0);
+export default function ItemTable({ items, itemClicked, entity, getTier, showCost, hideUseless }: ItemTableProps) {
+  const filteredItems = hideUseless ? items.filter(item => item.uses > 0) : items;
 
   return (
     <div className="overflow-x-auto">
