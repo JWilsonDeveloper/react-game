@@ -92,84 +92,85 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
   };
 
   return (
-      <div className="relative overflow-x-auto">
-          {overlayVisible && (
-              <div className={`absolute inset-0 flex justify-center items-center bg-opacity-50 transition-opacity duration-500 ${overlayVisible ? 'opacity-100' : 'opacity-0'}`}>
-                  <div className={`text-2xl md:text-4xl font-bold ${turn.success ? 'text-green-500' : 'text-red-500'}`}>
-                      {overlayContent}
-                  </div>
-              </div>
+    <div className="relative overflow-x-auto rounded-lg">
+      {overlayVisible && (
+        <div className={`absolute inset-0 flex justify-center items-center bg-opacity-50 transition-opacity duration-500 ${overlayVisible ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`text-2xl md:text-4xl font-bold ${turn.success ? 'text-green-500' : 'text-red-500'}`}>
+            {overlayContent}
+          </div>
+        </div>
+      )}
+      <table className="table-auto w-full border-collapse border border-gray-200 bg-white min-h-[300px]">
+        <tbody>
+          <tr className="bg-gray-200">
+            <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg rounded-t-lg" colSpan={2}>
+              <span className={showMove ? '' : 'invisible'}>
+                {turn.moveString}
+              </span>
+            </td>
+          </tr>
+          {hasRoll && (
+            <>
+              <tr className="bg-white">
+                <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
+                  <span className={showLabel1 ? '' : 'invisible'}>
+                    Min
+                  </span>
+                </td>
+                <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
+                  <span className={showField1 ? '' : 'invisible'}>
+                    {turn.minimum}
+                  </span>
+                </td>
+              </tr>
+              <tr className="bg-gray-200">
+                <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
+                  <span className={showLabel2 ? '' : 'invisible'}>
+                    Success Bonus
+                  </span>
+                </td>
+                <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
+                  <span className={showField2 ? '' : 'invisible'}>
+                    +{turn.bonus}
+                  </span>
+                </td>
+              </tr>
+              <tr className="bg-white">
+                <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
+                  <span className={showLabel3 ? '' : 'invisible'}>
+                    Roll
+                  </span>
+                </td>
+                <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
+                  <span className={showField3 ? '' : 'invisible'}>
+                    {turn.roll}
+                  </span>
+                </td>
+              </tr>
+              <tr className="bg-gray-200">
+                <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
+                  <span className={showLabel4 ? '' : 'invisible'}>
+                    Total
+                  </span>
+                </td>
+                <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
+                  <span className={showField4 ? '' : 'invisible'}>
+                    {turn.total}
+                  </span>
+                </td>
+              </tr>
+            </>
           )}
-          <table className="table-auto w-full border-collapse border border-gray-200 bg-white">
-              <tbody>
-                  <tr className="bg-gray-200">
-                      <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg" colSpan={2}>
-                          <span className={showMove ? '' : 'invisible'}>
-                              {turn.moveString}
-                          </span>
-                      </td>
-                  </tr>
-                  {hasRoll && (
-                      <>
-                          <tr className="bg-white">
-                              <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
-                                  <span className={showLabel1 ? '' : 'invisible'}>
-                                      Min
-                                  </span>
-                              </td>
-                              <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
-                                  <span className={showField1 ? '' : 'invisible'}>
-                                      {turn.minimum}
-                                  </span>
-                              </td>
-                          </tr>
-                          <tr className="bg-gray-200">
-                              <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
-                                  <span className={showLabel2 ? '' : 'invisible'}>
-                                      Success Bonus
-                                  </span>
-                              </td>
-                              <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
-                                  <span className={showField2 ? '' : 'invisible'}>
-                                      +{turn.bonus}
-                                  </span>
-                              </td>
-                          </tr>
-                          <tr className="bg-white">
-                              <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
-                                  <span className={showLabel3 ? '' : 'invisible'}>
-                                      Roll
-                                  </span>
-                              </td>
-                              <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
-                                  <span className={showField3 ? '' : 'invisible'}>
-                                      {turn.roll}
-                                  </span>
-                              </td>
-                          </tr>
-                          <tr className="bg-gray-200">
-                              <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
-                                  <span className={showLabel4 ? '' : 'invisible'}>
-                                      Total
-                                  </span>
-                              </td>
-                              <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
-                                  <span className={showField4 ? '' : 'invisible'}>
-                                      {turn.total}
-                                  </span>
-                              </td>
-                          </tr>
-                      </>
-                  )}
-                  <tr className="bg-white">
-                      <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg" colSpan={2}>
-                          <span className={showResult ? '' : 'invisible'}>
-                              {turn.resultString}
-                          </span>
-                      </td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>
+          <tr className="bg-white">
+            <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg rounded-b-lg" colSpan={2}>
+              <span className={showResult ? '' : 'invisible'}>
+                {turn.resultString}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   );
+  
 }

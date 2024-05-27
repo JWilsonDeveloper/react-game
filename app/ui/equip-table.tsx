@@ -12,21 +12,20 @@ interface EquipTableProps {
 export default function EquipTable({ equipList, getTier, equipSelected, showCost }: EquipTableProps) {
   return (
     <div className="overflow-x-auto">
-      <table className="table-auto w-full border-collapse border border-gray-200 bg-white">
+      <table className="table-auto w-full border-collapse border border-2 border-black bg-white">
         <thead>
-          <tr>
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">Type</th>
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">Name</th>
-            {showCost && <th className="border border-gray-200 p-2 text-xs md:text-sm">Cost</th>}
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">Effect</th>
-            <th className="border border-gray-200 p-2 text-xs md:text-sm">Stat</th>
+          <tr className="border border-b-2 border-black">
+            <th className="border border-gray-200 sm:p-2 text-xs md:text-sm">Type</th>
+            <th className="border border-gray-200 sm:p-2 text-xs md:text-sm">Name</th>
+            {showCost && <th className="border border-gray-200 sm:p-2 text-xs md:text-sm">Cost</th>}
+            <th className="border border-gray-200 sm:p-2 text-xs md:text-sm">Effect</th>
           </tr>
         </thead>
         <tbody>
           {equipList.map((equipment, index) => (
-            <tr key={index} className={getTier(equipment)}>
-                <td className="border border-gray-200 p-2 text-xs md:text-sm">{equipment.type}</td>
-                <td className="border border-gray-200 p-2 text-xs md:text-sm">
+            <tr key={index} className={getTier(equipment) + " border border-b-2 border-black"}>
+                <td className="border border-gray-200 sm:p-2 text-xs md:text-sm">{equipment.type}</td>
+                <td className="border border-gray-200 sm:p-2 text-xs md:text-sm">
                     {equipSelected ? (
                     <Button
                         onClick={() => equipSelected(equipment)}
@@ -37,9 +36,8 @@ export default function EquipTable({ equipList, getTier, equipSelected, showCost
                     equipment.name
                 )}
               </td>
-              {showCost && <td className="border border-gray-200 p-2 text-xs md:text-sm">{equipment.cost + " GP"}</td>}
-              <td className="border border-gray-200 p-2 text-xs md:text-sm">{equipment.effect}</td>
-              <td className="border border-gray-200 p-2 text-xs md:text-sm">{equipment.targetStat}</td>
+              {showCost && <td className="border border-gray-200 sm:p-2 text-xs md:text-sm">{equipment.cost + " GP"}</td>}
+              <td className="border border-gray-200 sm:p-2 text-xs md:text-sm">{"+" + equipment.effect + " " + equipment.targetStat}</td>
             </tr>
           ))}
         </tbody>

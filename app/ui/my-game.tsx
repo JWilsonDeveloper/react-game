@@ -71,7 +71,7 @@ export default function MyGame({ basePlayer, enemies, items, moves, equipment}: 
                 <div className="flex flex-col w-full md:w-1/3 justify-center">
                     <XPBar player={player} getEarnedLevel={getEarnedLevel} />
                 </div>
-                <div className="flex flex-col w-full md:w-2/3">
+                <div className="flex flex-col w-full h-full bg-yellow-200 justify-center md:w-2/3">
                     <Message text={msg}/>
                 </div>
             </div>

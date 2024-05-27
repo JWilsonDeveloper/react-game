@@ -73,9 +73,9 @@ export default function Shopping({player, setPlayer, items, setShopping, equipme
 
     return (
         <div className="flex flex-col w-full text-center bg-white gap-4 border border-black rounded-lg p-2">
-            <div className="grid grid-cols-3 w-full items-end">
-                <h1 className="text-2xl font-bold mb-4 col-start-2">Purchase Items and Equipment</h1>
-                <h1 className="text-xl font-bold mb-4 col-start-3">GP: {tempPlayer.gp}</h1>
+            <div className="flex flex-col w-full items-center">
+                <h1 className="text-2xl font-bold mb-2">Purchase Items and Equipment</h1>
+                <h1 className="text-xl font-bold">GP: {tempPlayer.gp}</h1>
             </div>
             <div>
                 <ShopTabs player={tempPlayer} itemSelected={buyItem} equipSelected={buyEquipment} items={items} equips={equipment} getTier={getTier} />

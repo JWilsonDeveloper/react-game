@@ -4,6 +4,7 @@ import { useState } from "react";
 import React from "react";
 import LevelingTabs from "./leveling-tabs";
 import StatTable from "@/app/ui/stat-table";
+import EntityStats from "@/app/ui/entity-stats";
 
 interface LevelingProps {
   player: Player;
@@ -29,7 +30,8 @@ export default function Leveling({
   msg,
   setMsg,
   getTier,
-}: LevelingProps) {
+}: LevelingProps) 
+{
   const oldIndex = player.level - 1;
   const newIndex = oldIndex + gainLevels;
   const newHP = player.totalHP + baseHPs[newIndex] - baseHPs[oldIndex];
@@ -110,24 +112,34 @@ export default function Leveling({
   return (
     <div className="flex flex-col items-center w-full text-center">
       <div className="flex flex-col md:flex-row w-full gap-4">
-        <div className="flex flex-col items-center w-full md:w-1/4 bg-white border border-black rounded-lg p-2 gap-4">
+        <div className="flex flex-col items-center w-full md:w-2/5 bg-white border border-black rounded-lg p-2 gap-4">
           <h1 className="text-2xl font-bold">Stat Increases</h1>
-          <StatTable player={player} tempPlayer={tempPlayer} />
+          <div className="flex sm:gap-4">
+            <div>
+                <h1 className="text-xl font-bold">Level {player.level}</h1>
+                <EntityStats entity={player} hideGPAP={true} />
+            </div>
+            <div>
+                <h1 className="text-xl font-bold">Level {getEarnedLevel(player.xp)}</h1>
+                <EntityStats entity={tempPlayer} hideGPAP={true} />
+            </div>
+          </div>
+          
         </div>
         <div className="flex flex-col w-full items-center justify-center bg-white border border-black rounded-lg p-2">
             <div className="flex flex-col w-full items-center">
-                <h1 className="text-2xl font-bold mb-4 col-start-2">
+                <h1 className="text-2xl font-bold mb-2">
                     Purchase Actions
                 </h1>
-                <h1 className="text-xl font-bold mb-4 col-start-3">
+                <h1 className="text-xl font-bold">
                     AP: {tempPlayer.ap}
                 </h1>
             </div>
             <LevelingTabs
-            tempPlayer={tempPlayer}
-            moves={moves}
-            actionSelected={buyAction}
-            getTier={getTier}
+                tempPlayer={tempPlayer}
+                moves={moves}
+                actionSelected={buyAction}
+                getTier={getTier}
             />
         </div>
       </div>

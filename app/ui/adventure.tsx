@@ -380,18 +380,18 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
                 <div className="flex-col border-black md:w-2/3 rounded-lg h-full">
                     <AdventureTabs player={player} actionSelected={actionSelected} getTier={getTier} />
                 </div>
-                <div className="flex flex-cols-1 gap-4 md:w-1/3 md:flex-cols-2 rounded-lg justify-center">
-                    <div className="bg-white rounded-lg">
+                <div className="flex sm:gap-4 md:w-1/3 rounded-lg justify-center">
+                    <div className="bg-white rounded-lg w-1/2">
                         <EntityStats entity={player} />
                     </div>
-                    <div className="bg-white rounded-lg">
+                    <div className="bg-white rounded-lg w-1/2">
                         {adventureState !== 'starting' && <EntityStats entity={enemy} />}
                     </div>
                 </div>
             </div>
             {showOverlay && (
                 <div
-                    className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75"
+                    className="fixed inset-0 flex items-center justify-center bg-black"
                     style={{ whiteSpace: "pre-wrap" }} // Ensure new lines are preserved
                     >
                     <div className="flex-col text-center">

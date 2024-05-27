@@ -4,9 +4,10 @@ import Image from "next/image";
 
 interface EntityStatsProps {
   entity: Entity;
+  hideGPAP?: boolean;
 }
 
-export default function EntityStats({ entity }: EntityStatsProps) {
+export default function EntityStats({ entity, hideGPAP }: EntityStatsProps) {
   //const [isStacked, setIsStacked] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -80,7 +81,7 @@ export default function EntityStats({ entity }: EntityStatsProps) {
           src={entity.imgSrc}
           width={100}
           height={76}
-          className="w-full h-auto max-w-[150px]" // Make the image responsive
+          className="w-full h-auto min-w-[85px] max-w-[150px]" // Make the image responsive
           alt="Player image"
         />
       </div>
@@ -92,12 +93,51 @@ export default function EntityStats({ entity }: EntityStatsProps) {
           <div className="text-base md:text-lg lg:text-xl">
             HP: {entity.currHP + hpBoost}/{entity.totalHP + hpBoost}
           </div>
-          {(entity as Player).equipList !== undefined && (
-            <div className="text-sm md:text-base lg:text-lg mt-1">
-              MP: {entity.currMP + mpBoost}/{entity.totalMP + mpBoost}
+          {(entity as Player).equipList !== undefined ?
+          <div className="justify-center flex flex-col items-center text-right">
+            <div className="grid lg:grid-cols-2 grid-cols-1">
+              <div className="lg:p-1 text-base lg:text-sm text-xs">
+                Defense: {defense}
+              </div>
+              <div className="lg:p-1 text-base lg:text-sm text-xs">
+                Armor: {entity.armor}
+              </div>
+              <div className="lg:p-1 text-base lg:text-sm text-xs">
+                SPD: {entity.speed}
+              </div>
+              <div className="lg:p-1 text-base lg:text-sm text-xs">
+                STR: {entity.strength}
+              </div>
+              {!hideGPAP && 
+                <div className="lg:p-1 text-base lg:text-sm text-xs">
+                  GP: {entity.gp}
+                </div>
+              }
+               {!hideGPAP && 
+              <div className="lg:p-1 text-base lg:text-sm text-xs">
+                AP: {(entity as Player).ap}
+              </div>
+              }
+              
             </div>
-          )}
+          </div>
+          :
+          <div className="lg:p-1 text-base lg:text-sm text-xs">
+            Defense: {defense}
+          </div>
+          /*
+            ? 
+              <div className="text-sm md:text-base lg:text-lg mt-1">
+                MP: {entity.currMP + mpBoost}/{entity.totalMP + mpBoost}
+              </div>
+            :
+              <div className="text-sm md:text-base lg:text-lg mt-1">
+                MP: ?/?
+              </div>
+              */
+          }
         </div>
+        {/*
         <div className="justify-center flex flex-col items-center">
           <div className="grid lg:grid-cols-2 grid-cols-1">
             <div className="lg:p-1 text-base lg:text-sm text-xs">
@@ -112,11 +152,12 @@ export default function EntityStats({ entity }: EntityStatsProps) {
             <div className="lg:p-1 text-base lg:text-sm text-xs">
               Defense: {defense}
             </div>
-            {(entity as Player).equipList !== undefined && (
+            {(entity as Player).equipList !== undefined ? (
               <div className="lg:p-1 text-base lg:text-sm text-xs">
                 GP: {entity.gp}
               </div>
-            )}
+            )
+            :<div className="lg:p-1 text-base lg:text-sm text-xs invisible">-</div>}
             {(entity as Player).equipList !== undefined && (
               <div className="lg:p-1 text-base lg:text-sm text-xs">
                 AP: {(entity as Player).ap}
@@ -129,6 +170,7 @@ export default function EntityStats({ entity }: EntityStatsProps) {
               </div>
             )}
         </div>
+          */}
       </div>
     </div>
   );

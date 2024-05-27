@@ -763,8 +763,8 @@ const enemies = [
 ]
 
   return (
-    <main className="flex min-h-screen flex-col p-6">
-      <div className="flex grow flex-col justify-center gap-6 rounded-lg bg-black px-6 py-2 md:w-5/5 md:px-20">
+    <main className="flex min-h-screen flex-col">
+      <div className="flex grow flex-col justify-center bg-black px-2 py-2 md:w-5/5 md:px-20">
         <div className="flex grow flex-col gap-4 md:flex-row">
           <MyGame basePlayer={basePlayer} enemies={enemies} items={items} moves={moves} equipment={equipment} />
         </div>

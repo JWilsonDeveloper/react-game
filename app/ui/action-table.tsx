@@ -15,12 +15,23 @@ function isAction(move: Move): move is Action {
 }
 
 export default function ActionTable({ actions, actionClicked, entity, getTier, showCost }: ActionTableProps) {
+    /*
   const sortedActions = actions.sort((a, b) => {
     if (a.type < b.type) return -1;
     if (a.type > b.type) return 1;
-    if (b.tier !== a.tier) return b.tier - a.tier; // Sort by tier descending if types are the same
+    if (b.tier !== a.tier) return b.tier - a.tier;
     return 0;
   });
+  */
+  const sortedActions = actions.sort((a, b) => {
+    // Compare by tier first (descending order)
+    if (a.tier !== b.tier) {
+      return b.tier - a.tier;
+    }
+    // If tiers are the same, compare by type (ascending order)
+    return a.type.localeCompare(b.type);
+  });
+  
 
   function calculateEffect(move: Move, player: Entity) {
     if (move.type !== 'FLEE') {
@@ -59,60 +70,50 @@ export default function ActionTable({ actions, actionClicked, entity, getTier, s
 
   return (
     <div className="overflow-x-auto">
-      <table className="table-auto w-full border-collapse border border-gray-200 bg-white">
+      <table className="table-auto w-full border-collapse border border-2 border-black bg-white">
         <thead>
             <React.Fragment>
                 <tr>
-                    <th className="border border-gray-200 p-2 text-xs md:text-sm row-span-2" rowSpan={2}>Type</th>
-                    <th className="border border-gray-200 p-2 text-xs md:text-sm row-span-2" rowSpan={2}>Action</th>
-                    {showCost && <th className="border border-gray-200 p-2 text-xs md:text-sm row-span-2" rowSpan={2}>Cost</th>}
-                    <th className="border border-gray-200 p-2 text-xs md:text-sm">Success Bonus</th>
-                    <th className="border border-gray-200 p-2 text-xs md:text-sm row-span-2" rowSpan={2}>MP Cost</th>
+                    <th className="border border-gray-200 sm:p-2 text-xs md:text-sm row-span-2" rowSpan={2}>Type</th>
+                    <th className="border border-gray-200 sm:p-2 text-xs md:text-sm row-span-2" rowSpan={2}>Action</th>
+                    {showCost && <th className="border border-gray-200 sm:p-2 text-xs md:text-sm row-span-2" rowSpan={2}>Cost</th>}
+                    <th className="border border-gray-200 sm:p-2 text-xs md:text-sm">Success Bonus</th>
+                    <th className="border border-gray-200 sm:p-2 text-xs md:text-sm row-span-2" rowSpan={2}>MP Cost</th>
                 </tr>
-                <tr>
-                    <th className="border border-gray-200 p-2 text-xs md:text-sm">Effect</th>
+                <tr className="border border-b-2 border-black">
+                    <th className="border border-gray-200 sm:p-2 text-xs md:text-sm">Effect</th>
                 </tr>
             </React.Fragment>
         </thead>
         <tbody>
         {sortedActions.map((action, index) => (
             <React.Fragment key={index}>
-            <tr className={getTier(action)}>
-                <td className="border border-gray-200 p-2 text-xs md:text-sm row-span-2" rowSpan={2}>{action.type}</td>
-                <td className="border border-gray-200 p-2 text-xs md:text-sm row-span-2" rowSpan={2}>
-                <Button
-                    onClick={() => actionClicked(action)}
-                    className="w-full bg-blue-500 text-white rounded text-xs md:text-sm"
-                    buttonText={action.name}
-                />
-                </td>
-                {showCost && (
-                    <td className="border border-gray-200 p-2 text-xs md:text-sm row-span-2" rowSpan={2}>
-                        {action.cost + " AP"}
+                <tr className={getTier(action)}>
+                    <td className="border border-gray-200 sm:p-2 text-xs md:text-sm row-span-2" rowSpan={2}>{action.type}</td>
+                    <td className="border border-gray-200 sm:p-2 text-xs md:text-sm row-span-2" rowSpan={2}>
+                    <Button
+                        onClick={() => actionClicked(action)}
+                        className="w-full bg-blue-500 text-white rounded text-xs md:text-sm"
+                        buttonText={action.name}
+                    />
                     </td>
-                )}
-                <td className="border border-gray-200 p-2 text-xs md:text-sm">
-                    {"+" + getSuccessBonus(action, entity)}
-                </td>
-                <td className="border border-gray-200 p-2 text-xs md:text-sm rowSpan={2}" rowSpan={2}>
-                    {action.mpCost} MP
-                </td>
-                {/*
-                <td className="border border-gray-200 p-2 text-xs md:text-sm row-span-2" rowSpan={2}>
-                    {isAction(action) ? action.target : 'x'}
-                </td>
-            */}
-            </tr>
-            <tr className={getTier(action)}>
-                <td className="border border-gray-200 p-2 text-xs md:text-sm">
-                    {isAction(action) ? calculateEffect(action, entity) + " " + action.targetStat : 'x'}
-                </td>
-                {/*
-                <td className="border border-gray-200 p-2 text-xs md:text-sm">
-                    {isAction(action) ? action.targetStat : 'x'}
-                </td>
-                */}
-            </tr>
+                    {showCost && (
+                        <td className="border border-gray-200 sm:p-2 text-xs md:text-sm row-span-2" rowSpan={2}>
+                            {action.cost + " AP"}
+                        </td>
+                    )}
+                    <td className="border border-gray-200 sm:p-2 text-xs md:text-sm">
+                        {"+" + getSuccessBonus(action, entity)}
+                    </td>
+                    <td className="border border-gray-200 sm:p-2 text-xs md:text-sm rowSpan={2}" rowSpan={2}>
+                        {action.mpCost} MP
+                    </td>
+                </tr>
+                <tr className={getTier(action) + " border border-b-2 border-black"}>
+                    <td className="border border-gray-200  sm:p-2 text-xs md:text-sm">
+                        {isAction(action) ? calculateEffect(action, entity) + " " + (action.targetStat === "HP" ? "DMG" : action.targetStat ) : '-'}
+                    </td>
+                </tr>
             </React.Fragment>
         ))}
         </tbody>
