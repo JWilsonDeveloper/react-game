@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react';
 
-interface RulesProps {
-}
+interface RulesProps {}
 
-export default function Rules({ }: RulesProps) {
+export default function Rules({}: RulesProps) {
     return (
         <div className="flex flex-col items-center justify-center h-full bg-white p-4 md:p-8">
             <h1 className="text-2xl md:text-3xl font-bold mb-6">Rules</h1>
@@ -29,10 +28,10 @@ export default function Rules({ }: RulesProps) {
                         <section className="mb-2">
                             <h3 className="text-base font-semibold mb-1">Combat Rounds</h3>
                             <p className="text-sm md:text-base text-gray-700">
-                                There a variety of actions, including making an attack, using an item, and attempting to escape.
+                                There are a variety of actions, including making an attack, using an item, and attempting to escape.
                                 Selecting an action triggers a round of combat. 
                                 If your action does not result in the end of the battle, your opponent will perform an action. 
-                                If your opponent's action does not result in the end of the battle, you will be prompted to select your next action.
+                                If your opponent&apos;s action does not result in the end of the battle, you will be prompted to select your next action.
                             </p>
                         </section>
                         <section>
@@ -40,11 +39,11 @@ export default function Rules({ }: RulesProps) {
                             <p className="text-sm md:text-base text-gray-700">
                                 Unless it succeeds automatically, selecting an action triggers a success roll to determine whether or not you succeed. 
                                 The success roll provides you with a random number between 1 and 20. 
-                                This number is added to your actions's <strong>success bonus</strong>.
+                                This number is added to your action&apos;s <strong>success bonus</strong>.
                                 If the total is less than the target value, the action fails and nothing happens.
                                 If the total is greater than or equal to the target value, the action succeeds. 
                                 A successful action triggers an effect roll to determine how powerful the effect is. 
-                                An action's <strong>effect</strong> is the range of possible values that may be returned by the effect roll.
+                                An action&apos;s <strong>effect</strong> is the range of possible values that may be returned by the effect roll.
                             </p>
                             <section className="mt-2">
                                 <p className="text-sm italic md:text-base text-gray-700">
@@ -63,7 +62,7 @@ export default function Rules({ }: RulesProps) {
                                 <ul className="list-disc list-inside text-sm md:text-base text-gray-700">
                                     <li>Certain actions, such as using an HP Potion, succeed automatically.</li>
                                     <li>Certain actions, such as fleeing, do not have an effect because they do not impact HP or other stats.</li>
-                                    <li>The target value for a success roll is equal to your opponent's defense.</li>
+                                    <li>The target value for a success roll is equal to your opponent&apos;s defense.</li>
                                 </ul>
                             </section>
                         </section>
@@ -74,7 +73,7 @@ export default function Rules({ }: RulesProps) {
                     <section className="mb-2">
                         <p className="text-sm md:text-base text-gray-700">
                         {/* Detailed rules about shopping go here */}
-                        Every time a battle ends, you have the option to buy new items and equipment using the GP you've collected from defeated opponents.
+                        Every time a battle ends, you have the option to buy new items and equipment using the GP you&apos;ve collected from defeated opponents.
                         </p>
                     </section>
                 </section>
@@ -143,7 +142,7 @@ export default function Rules({ }: RulesProps) {
                                 <tr className="border border-b-2 border-black">
                                     <td className="border border-gray-200 sm:p-2 text-xs md:text-sm">Ability Points</td>
                                     <td className="border border-gray-200 sm:p-2 text-xs md:text-sm">AP</td>
-                                    <td className="border border-gray-200 sm:p-2 text-xs md:text-sm">Used to new abilities when leveling up</td>
+                                    <td className="border border-gray-200 sm:p-2 text-xs md:text-sm">Used to purchase new abilities when leveling up</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -153,5 +152,4 @@ export default function Rules({ }: RulesProps) {
             </div>
         </div>
     );
-    
 }
