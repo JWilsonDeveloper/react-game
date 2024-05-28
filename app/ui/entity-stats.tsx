@@ -95,6 +95,9 @@ export default function EntityStats({ entity, hideGPAP }: EntityStatsProps) {
           </div>
           {(entity as Player).equipList !== undefined ?
           <div className="justify-center flex flex-col items-center text-right">
+            <div className="text-base md:text-lg lg:text-xl">
+              MP: {entity.currMP + mpBoost}/{entity.totalMP + mpBoost}
+            </div>
             <div className="grid lg:grid-cols-2 grid-cols-1">
               <div className="lg:p-1 text-base lg:text-sm text-xs">
                 Defense: {defense}
