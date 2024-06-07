@@ -285,7 +285,7 @@ interface AdventureProps {
             Math.abs(enemy.level - player.level) <= levelRange
         );
       
-        let enemyLevel;
+        let enemyLevel : number = 1;
         if (player.level === 1) {
             // Special case when player's level is 1
             const rand = Math.random();
