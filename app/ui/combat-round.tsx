@@ -37,12 +37,12 @@ export default function CombatRound({ round, setShowOverlay }: CombatRoundProps)
       <div className="relative">
         <div className="absolute inset-5 flex justify-between">
           {playerOverlay1 && (
-            <span className={`flex items-center justify-center text-xl md:text-2xl font-bold bg-gray-200 rounded-full border border-black border-4 ${parseInt(playerOverlay1) > 0 ? "text-green-500" : "text-red-500"} w-8 h-8 md:w-12 md:h-12`}>
+            <span className={`flex items-center justify-center text-lg md:text-xl font-bold bg-gray-200 rounded-full border border-black border-4 ${parseInt(playerOverlay1) > 0 ? "text-green-500" : "text-red-500"} w-10 h-10 md:w-15 md:h-15`}>
               {playerOverlay1}
             </span>
           )}
           {playerOverlay2 && (
-            <span className={`flex items-center justify-center text-xl md:text-2xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(playerOverlay2) > 0 ? "text-green-500" : "text-red-500"} w-8 h-8 md:w-12 md:h-12`}>
+            <span className={`flex items-center justify-center text-lg md:text-xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(playerOverlay2) > 0 ? "text-green-500" : "text-red-500"} w-10 h-10 md:w-15 md:h-15`}>
               {playerOverlay2}
             </span>
           )}
@@ -55,12 +55,12 @@ export default function CombatRound({ round, setShowOverlay }: CombatRoundProps)
       <div className="relative">
         <div className="absolute inset-5 flex justify-between">
           {enemyOverlay1 && (
-            <span className={`flex items-center justify-center text-xl md:text-2xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(enemyOverlay1) > 0 ? "text-green-500" : "text-red-500"} w-8 h-8 md:w-12 md:h-12`}>
+            <span className={`flex items-center justify-center text-lg md:text-xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(enemyOverlay1) > 0 ? "text-green-500" : "text-red-500"} w-10 h-10 md:w-15 md:h-15`}>
               {enemyOverlay1}
             </span>
           )}
           {enemyOverlay2 && (
-            <span className={`flex items-center justify-center text-xl md:text-2xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(enemyOverlay2) > 0 ? "text-green-500" : "text-red-500"} w-8 h-8 md:w-12 md:h-12`}>
+            <span className={`flex items-center justify-center text-lg md:text-xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(enemyOverlay2) > 0 ? "text-green-500" : "text-red-500"} w-10 h-10 md:w-15 md:h-15`}>
               {enemyOverlay2}
             </span>
           )}

@@ -156,7 +156,12 @@ interface AdventureProps {
                         }
                     }
                     if(!(tempGainLevels > 0)){
-                        setAdventureState('betweenBattles');
+                        if(escaped){
+                            setAdventureState('escaped');
+                        }
+                        else{
+                            setAdventureState('victory');
+                        }
                     } 
                     else{
                         setGainLevelsCopy(tempGainLevels);
@@ -320,7 +325,7 @@ interface AdventureProps {
         setEnemy(nextEnemy);
       
         // Update message
-        setMsg(msg + `\n${nextEnemy.name} appeared!`);
+        setMsg(msg + `\n------------------------------------\n${nextEnemy.name} appeared!`);
       
         // Reset between battles flag
         setAdventureState('');
@@ -333,10 +338,19 @@ interface AdventureProps {
 
     return (
         <div className="relative flex flex-col gap-4 w-full text-center bg-black rounded-lg">
-            {adventureState === 'betweenBattles' && (
+            {adventureState === 'escaped' && (
                 <div className="absolute inset-0 z-10 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
                 <div className="flex-col w-1/3">
-                    <h1 className="text-xl font-bold mb-4">You Survived!</h1>
+                    <h1 className="text-xl font-bold mb-4">You escaped!</h1>
+                    <Button buttonText="Next Battle!" className="w-full mb-4" onClick={nextBattle} />
+                    <Button buttonText="Go Shopping!" className="w-full" onClick={() => setShopping(true)} />
+                </div>
+                </div>
+            )}
+            {adventureState === 'victory' && (
+                <div className="absolute inset-0 z-10 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
+                <div className="flex-col w-1/3">
+                    <h1 className="text-xl font-bold mb-4">Victory!</h1>
                     <Button buttonText="Next Battle!" className="w-full mb-4" onClick={nextBattle} />
                     <Button buttonText="Go Shopping!" className="w-full" onClick={() => setShopping(true)} />
                 </div>

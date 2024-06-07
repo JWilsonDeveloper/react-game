@@ -197,7 +197,7 @@ const magicBlast : Action = {
   type: 'SPELL',
   slot: 2,
   tier: 0,
-  successBonus: 3,
+  successBonus: 2,
   mpCost: 3,
   cost: 0,
   effect:{

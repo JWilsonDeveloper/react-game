@@ -112,12 +112,12 @@ export default function MyGame({ basePlayer, enemies, items, moves, equipment}: 
             {showRules 
                 ?   <Rules /> 
                 :   <div>
-                        <div className="flex flex-col md:flex-row gap-4 mb-4 w-full justify-center">
+                        <div className="flex flex-col md:flex-row gap-4 mb-4 w-full items-stretch">
                             <div className="flex flex-col w-full md:w-1/3 justify-center">
                                 <XPBar player={player} getEarnedLevel={getEarnedLevel} />
                             </div>
-                            <div className="flex flex-col w-full h-full bg-yellow-200 justify-center md:w-2/3">
-                                <Message text={msg}/>
+                            <div className="flex flex-col w-full md:w-2/3 justify-center">
+                                <Message text={msg} />
                             </div>
                         </div>
                         <div className="w-full">

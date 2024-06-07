@@ -109,7 +109,7 @@ export default function AbilityTable({ actions, actionClicked, entity, getTier, 
         </thead>
         <tbody>
           {sortedActions.map((action, index) => {
-            const disableButton = (adventuring && entity.currMP < action.mpCost) || (showCost && (entity as Player).ap < action.cost);
+            const disableButton = (adventuring && entity.currMP < action.mpCost) || (showCost && (entity as Player).ap < action.cost) || (!adventuring && !showCost);
             return (
               <React.Fragment key={index}>
                 <tr className={getTier(action)}>
@@ -127,7 +127,7 @@ export default function AbilityTable({ actions, actionClicked, entity, getTier, 
                       {action.cost + " AP"}
                     </td>
                   )}
-                  <td className="border border-gray-200 w-full sm:p-2 text-xs md:text-sm tooltip-container allow-pointer-events">
+                  <td className={`w-full sm:p-2 text-xs md:text-sm tooltip-container allow-pointer-events`}>
                     <p
                       className="info-text inline-block"
                       onMouseEnter={() => setHoveredIndex(index + "success")}
@@ -141,13 +141,13 @@ export default function AbilityTable({ actions, actionClicked, entity, getTier, 
                       </div>
                     )}
                   </td>
-                  <td className="border border-gray-200 sm:p-2 text-xs md:text-sm row-span={2} row-span-2" rowSpan={2}>
+                  <td className="border border-gray-200 sm:p-2 text-xs md:text-sm row-span-2" rowSpan={2}>
                     {action.mpCost} MP
                   </td>
                 </tr>
-                <tr className={getTier(action) + " border-b-2 border-black "}>
+                <tr className={getTier(action) + " border-b-2 border-black"}>
                   {action.effect
-                    ? <td className="border border-gray-200 w-full sm:p-2 text-xs md:text-sm tooltip-container allow-pointer-events">
+                    ? <td className="w-full sm:p-2 text-xs md:text-sm tooltip-container allow-pointer-events">
                       <p
                         className="info-text inline-block"
                         onMouseEnter={() => setHoveredIndex(index + "effect")}
@@ -161,13 +161,13 @@ export default function AbilityTable({ actions, actionClicked, entity, getTier, 
                         </div>
                       )}
                     </td>
-                    : <td className="border border-gray-200 w-full sm:p-2 text-xs md:text-sm tooltip-container allow-pointer-events">
+                    : <td className="w-full inline-block sm:p-2 text-xs md:text-sm">
                       <p>-</p>
                     </td>
                   }
                 </tr>
               </React.Fragment>
-            );
+            );                       
           })}
         </tbody>
       </table>

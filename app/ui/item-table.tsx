@@ -81,7 +81,7 @@ interface ItemTableProps {
 
 export default function ItemTable({ items, itemClicked, entity, getTier, showCost, shopping }: ItemTableProps) {
   const [hoveredIndex, setHoveredIndex] = useState<string | null>(null);
-  const filteredItems = shopping ? items.filter(item => item.uses && item.uses > 0) : items;
+  const filteredItems = items.filter(item => item.uses && item.uses > 0);
   const sortedItems = filteredItems.sort((a, b) => {
     if (a.tier !== b.tier) {
       return a.tier - b.tier; // Sort by tier ascending
@@ -126,7 +126,7 @@ export default function ItemTable({ items, itemClicked, entity, getTier, showCos
                                 </td>
                             )}
                             <td className="border border-gray-200 sm:p-2 text-xs md:text-sm row-span-2" rowSpan={2}>{item.uses}</td>
-                            <td className="border border-gray-200 w-full sm:p-2 text-xs md:text-sm tooltip-container allow-pointer-events">
+                            <td className="w-full sm:p-2 text-xs md:text-sm tooltip-container allow-pointer-events">
                               {item.effect && item.effect.target === "OTHER"
                                 ? <p
                                     className="info-text inline-block"
@@ -149,7 +149,7 @@ export default function ItemTable({ items, itemClicked, entity, getTier, showCos
                         </tr>
                         <tr className={getTier(item) + " border-b-2 border-black "}>
                           {item.effect
-                            ? <td className={getTier(item) + " border border-gray-200 w-full sm:p-2 text-xs md:text-sm tooltip-container allow-pointer-events"}>
+                            ? <td className={getTier(item) + " w-full sm:p-2 text-xs md:text-sm tooltip-container allow-pointer-events"}>
                               <p
                                 className="info-text inline-block"
                                 onMouseEnter={() => setHoveredIndex(index + "effect")}
@@ -163,7 +163,7 @@ export default function ItemTable({ items, itemClicked, entity, getTier, showCos
                                 </div>
                               )}
                             </td>
-                            : <td className="border border-gray-200 w-full sm:p-2 text-xs md:text-sm tooltip-container allow-pointer-events">
+                            : <td className="w-full sm:p-2 text-xs md:text-sm">
                               <p>-</p>
                             </td>
                           }
