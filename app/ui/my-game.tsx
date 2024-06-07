@@ -104,7 +104,7 @@ export default function MyGame({ basePlayer, enemies, items, moves, equipment}: 
     return (
         <div className="w-full flex flex-col">
             <button
-                className="fixed z-10 stop-0 left-0 mt-4 ml-4 p-2 bg-gray-200 rounded-full"
+                className="fixed z-30 stop-0 left-0 mt-4 ml-4 p-2 bg-gray-200 rounded-full"
                 onClick={() => setShowRules(!showRules)}
                 >
                 {showRules ? <FaTimesCircle size={20} /> : <FaQuestionCircle size={20} />}
