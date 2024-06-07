@@ -6,8 +6,10 @@ import { Player, Action, EffectRoll, Entity, SkillBonus, Equipment } from './lib
 import Adventure from '@/app/ui/adventure';
 import MyGame from './ui/my-game';
 import hero from '@/app/images/hero.png';
+import { getAllEquipment } from '@/app/lib/data';
 
-export default function Page() {
+export default async function Page() {
+  const equipment = await getAllEquipment();
   const e1d4: EffectRoll = {
     id: 0,
     rangeMin: 1,
@@ -526,7 +528,7 @@ const items : Action[] = [
     uses : 1,
   },
 ]
-
+/*
 const equipment : Equipment[] = [
   {
   id: 0,
@@ -609,6 +611,7 @@ const equipment : Equipment[] = [
     type: 'MAGIC RING'
   },
 ]
+*/
 
 const actionList0 : Action[] = [punch, throwRock, magicBlast, runAway];
 const actionList1 : Action[] = [abilities[0], abilities[1]];

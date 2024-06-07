@@ -7,8 +7,34 @@ import {
   LatestInvoiceRaw,
   User,
   Revenue,
+  Equipment,
 } from './definitions';
 import { formatCurrency } from './utils';
+
+export async function getAllEquipment() {
+  try {
+    const data = await sql<Equipment>`
+      SELECT id, name, stat, effect, tier, cost, slot, type FROM equipment;
+    `;
+
+    // Transform the result into an array of equipment objects
+    const equipmentArray = data.rows.map(row => ({
+      id: row.id,
+      name: row.name,
+      stat: row.stat,
+      effect: row.effect,
+      tier: row.tier,
+      cost: row.cost,
+      slot: row.slot,
+      type: row.type
+    }));
+
+    return equipmentArray;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch the latest invoices.');
+  }
+}
 
 export async function fetchRevenue() {
   // Add noStore() here to prevent the response from being cached.

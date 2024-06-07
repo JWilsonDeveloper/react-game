@@ -4,8 +4,61 @@ const {
   customers,
   revenue,
   users,
+  equipment,
 } = require('../app/lib/placeholder-data.js');
 const bcrypt = require('bcrypt');
+
+async function seedEquipment(client) {
+  try {
+    // Ensure the uuid-ossp extension is available
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "equipment" table if it doesn't exist
+    await client.sql`
+      CREATE TABLE IF NOT EXISTS equipment (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        stat VARCHAR(3) CHECK (stat IN ('HP', 'MP', 'ARM', 'SPD', 'STR')) NOT NULL,
+        effect INTEGER NOT NULL,
+        tier INTEGER NOT NULL,
+        cost INTEGER NOT NULL,
+        slot INTEGER NOT NULL,
+        type VARCHAR(10) CHECK (type IN ('ARMOR', 'MAGIC RING')) NOT NULL
+      );
+    `;
+
+    console.log(`Created "equipment" table`);
+
+    // Insert data into the "equipment" table
+    const insertedEquipment = await Promise.all(
+      equipment.map(
+        (equip) => client.sql`
+        INSERT INTO equipment (name, stat, effect, tier, cost, slot, type)
+        VALUES (
+          ${equip.name},
+          ${equip.stat},
+          ${equip.effect},
+          ${equip.tier},
+          ${equip.cost},
+          ${equip.slot},
+          ${equip.type}
+        )
+        ON CONFLICT (id) DO NOTHING;
+      `
+      )
+    );
+
+    console.log(`Seeded ${insertedEquipment.length} equipment`);
+
+    return {
+      equipment: insertedEquipment,
+    };
+  } catch (error) {
+    console.error('Error seeding equipment:', error);
+    throw error;
+  }
+}
+
 
 async function seedUsers(client) {
   try {
@@ -167,6 +220,7 @@ async function main() {
   await seedCustomers(client);
   await seedInvoices(client);
   await seedRevenue(client);
+  await seedEquipment(client);
 
   await client.end();
 }

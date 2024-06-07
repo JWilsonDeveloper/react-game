@@ -1,5 +1,7 @@
-## Next.js App Router Course - Starter
+## Battle Game
 
-This is the starter template for the Next.js App Router Course. It contains the starting code for the dashboard application.
+Battle orcs and werewolves to reach level 5!
 
-For more information, see the [course curriculum](https://nextjs.org/learn) on the Next.js Website.
+I am building this game using Next.js (React) to improve my web development skills!
+
+I started it using the starter template for the Next.js App Router Course.

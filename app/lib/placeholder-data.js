@@ -180,9 +180,85 @@ const revenue = [
   { month: 'Dec', revenue: 4800 },
 ];
 
+const equipment = [
+  {
+  name: "Basic Clothes",
+  stat: 'ARM',
+  effect: 0,
+  tier: 0,
+  cost: 0,
+  slot: 0,
+  type: 'ARMOR'
+  },
+  {
+    name: "Minor Ring of MP",
+    stat: 'MP',
+    effect: 3,
+    tier: 0,
+    cost: 0,
+    slot: 1,
+    type: 'MAGIC RING'
+  },
+  {
+    name: "Leather Armor",
+    stat: 'ARM',
+    effect: 2,
+    tier: 1,
+    cost: 15,
+    slot: 0,
+    type: 'ARMOR'
+  },
+  {
+    name: "Minor Ring of HP",
+    stat: 'HP',
+    effect: 7,
+    tier: 1,
+    cost: 20,
+    slot: 1,
+    type: 'MAGIC RING'
+  },
+  {
+    name: "Chainmail Armor",
+    stat: 'ARM',
+    effect: 4,
+    tier: 2,
+    cost: 35,
+    slot: 0,
+    type: 'ARMOR'
+  },
+  {
+    name: "Ring of MP",
+    stat: 'MP',
+    effect: 12,
+    tier: 2,
+    cost: 25,
+    slot: 1,
+    type: 'MAGIC RING'
+  },
+  {
+    name: "Scalemail Armor",
+    stat: 'ARM',
+    effect: 6,
+    tier: 3,
+    cost: 80,
+    slot: 0,
+    type: 'ARMOR'
+  },
+  {
+    name: "Ring of HP",
+    stat: 'HP',
+    effect: 15,
+    tier: 3,
+    cost: 45,
+    slot: 1,
+    type: 'MAGIC RING'
+  },
+]
+
 module.exports = {
   users,
   customers,
   invoices,
   revenue,
+  equipment,
 };
