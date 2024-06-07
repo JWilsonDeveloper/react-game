@@ -70,7 +70,7 @@ export default function Rules({}: RulesProps) {
                                 <p>A success roll uses three values:</p>
                                 <div className={"pl-5"}>
                                     <ol className={"list-decimal"}>
-                                        <li>A target value (usually the opponent's Defense)</li>
+                                        <li>A target value (usually the opponent&apos;s Defense)</li>
                                         <li>The action&apos;s <strong>success bonus</strong></li>
                                         <li>A random number between 1 and 20</li>
                                     </ol>
