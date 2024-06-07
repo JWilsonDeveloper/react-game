@@ -7,9 +7,10 @@ interface RollTableProps {
     setSelfOverlay: Function;
     setOtherOverlay: Function;
     isLast : boolean;
+    start : boolean;
 }
 
-export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOtherOverlay, isLast }: RollTableProps) {
+export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOtherOverlay, isLast, start }: RollTableProps) {
   const [showMove, setShowMove] = useState(false);
   const [showLabel1, setShowLabel1] = useState(false);
   const [showLabel2, setShowLabel2] = useState(false);
@@ -24,48 +25,49 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
   const [overlayContent, setOverlayContent] = useState('');
 
   useEffect(() => {
-    const interval = 60;
-    let startTime = 300;
-
-    if(turn.successRoll){
-      const actions = [
-        () => setShowMove(true),
-        () => setShowLabel1(true),
-        () => setShowLabel2(true),
-        () => setShowLabel3(true),
-        () => setShowLabel4(true),
-        () => setShowField1(true),
-        () => setShowField2(true),
-        () => setShowField3(true),
-        () => setShowField4(true),
-        () => setShowResult(true),
-        () => triggerOverlay(),
-        () => triggerFunction(),
-      ];
+    if(start){
+      const interval = 60;
+      let startTime = 300;
   
-      const longIntervals = [5, 6, 7, 8, 9, 10, 11];
-  
-      actions.forEach((action, index) => {
-          let timeout = startTime + interval * index;
-          if (longIntervals.includes(index)) {
-              let i = longIntervals.indexOf(index) + 1;
-              timeout += interval * 4 * i;
-              if(isLast && index === actions.length - 1){
-                timeout += interval * 4;
-              }
-          }
-          setTimeout(action, timeout);
-      });
-    }
-    else{
-      setTimeout(() => {setShowMove(true)}, startTime);
-      setTimeout(() => {setShowResult(true)}, startTime + interval * 4);
-      setTimeout(() => {triggerOverlay()}, startTime + interval * 8);
-      const triggerTimeout = isLast ? startTime + interval * 16 : startTime + interval * 12;
-      setTimeout(() => {triggerFunction()}, triggerTimeout);
-    }
+      if(turn.successRoll){
+        const actions = [
+          () => setShowMove(true),
+          () => setShowLabel1(true),
+          () => setShowLabel2(true),
+          () => setShowLabel3(true),
+          () => setShowLabel4(true),
+          () => setShowField1(true),
+          () => setShowField2(true),
+          () => setShowField3(true),
+          () => setShowField4(true),
+          () => setShowResult(true),
+          () => triggerOverlay(),
+          () => triggerFunction(),
+        ];
     
-  }, [turn, triggerFunction]);
+        const longIntervals = [5, 6, 7, 8, 9, 10, 11];
+    
+        actions.forEach((action, index) => {
+            let timeout = startTime + interval * index;
+            if (longIntervals.includes(index)) {
+                let i = longIntervals.indexOf(index) + 1;
+                timeout += interval * 4 * i;
+                if(isLast && index === actions.length - 1){
+                  timeout += interval * 4;
+                }
+            }
+            setTimeout(action, timeout);
+        });
+      }
+      else{
+        setTimeout(() => {setShowMove(true)}, startTime);
+        setTimeout(() => {setShowResult(true)}, startTime + interval * 4);
+        setTimeout(() => {triggerOverlay()}, startTime + interval * 8);
+        const triggerTimeout = isLast ? startTime + interval * 16 : startTime + interval * 12;
+        setTimeout(() => {triggerFunction()}, triggerTimeout);
+      }
+    }
+  }, [turn, triggerFunction, start]);
 
   function triggerOverlay() {
     if (turn.success != undefined) {

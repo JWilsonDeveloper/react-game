@@ -39,7 +39,6 @@ interface AdventureProps {
     levelUp
   }: AdventureProps) {
     const [showOverlay, setShowOverlay] = useState(false);
-    const [overlayText, setOverlayText] = useState("COMBAT ROUND");
     const defaultPlayerTurn : Turn = {entity : player, moveString: "", resultString: "", success: false, action: player.abilityList[0]};
     const defaultEnemyTurn : Turn = {entity : enemy, moveString: "", resultString: "", success: false, action: enemy.abilityList[0]};
     const [round, setRound] = useState({playerTurn : defaultPlayerTurn, enemyTurn : defaultEnemyTurn});
@@ -405,7 +404,6 @@ interface AdventureProps {
                     style={{ whiteSpace: "pre-wrap" }} // Ensure new lines are preserved
                     >
                     <div className="flex-col text-center">
-                        <h1 className="text-xl border-black rounded-lg bg-white font-bold mb-4">{overlayText}</h1>
                         <CombatRound round={round} setShowOverlay={setShowOverlay}/>
                     </div>
                 </div>

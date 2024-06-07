@@ -10,67 +10,82 @@ interface CombatRoundProps {
 
 export default function CombatRound({ round, setShowOverlay }: CombatRoundProps) {
   const [showEnemyTable, setShowEnemyTable] = useState(false);
-  const [playerOverlay1, setPlayerOverlay1] = useState('');
-  const [enemyOverlay1, setEnemyOverlay1] = useState('');
-  const [playerOverlay2, setPlayerOverlay2] = useState('');
-  const [enemyOverlay2, setEnemyOverlay2] = useState('');
+  const [playerModifierOverlay1, setPlayerModifierOverlay1] = useState('');
+  const [enemyModifierOverlay1, setEnemyModifierOverlay1] = useState('');
+  const [playerModifierOverlay2, setPlayerModifierOverlay2] = useState('');
+  const [enemyModifierOverlay2, setEnemyModifierOverlay2] = useState('');
+  const [showClickText, setShowClickText] = useState(false);
   const player = round.playerTurn.entity;
   const enemy = round.enemyTurn.entity;
   const playerTurn = round.playerTurn;
   const enemyTurn = round.enemyTurn;
 
+  function awaitForUserTap() {
+    const handleGlobalClick = () => {
+        document.removeEventListener('click', handleGlobalClick);
+        setShowOverlay(false);
+    };
+    document.addEventListener('click', handleGlobalClick);
+    setShowClickText(true);
+}
 
   const playerTrigger = useCallback(() => {
     if (enemyTurn.moveString === "") {
-      setShowOverlay(false);
+      awaitForUserTap();
     } else {
       setShowEnemyTable(true);
     }
   }, [enemyTurn.moveString, setShowOverlay]);
 
   const enemyTrigger = useCallback(() => {
-    setShowOverlay(false);
+    awaitForUserTap();
   }, [setShowOverlay]);
 
   return (
-    <div className="grid gap-4 grid-cols-2 rounded-lg justify-center">
-      <div className="relative">
-        <div className="absolute inset-5 flex justify-between">
-          {playerOverlay1 && (
-            <span className={`flex items-center justify-center text-lg md:text-xl font-bold bg-gray-200 rounded-full border border-black border-4 ${parseInt(playerOverlay1) > 0 ? "text-green-500" : "text-red-500"} w-10 h-10 md:w-15 md:h-15`}>
-              {playerOverlay1}
-            </span>
-          )}
-          {playerOverlay2 && (
-            <span className={`flex items-center justify-center text-lg md:text-xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(playerOverlay2) > 0 ? "text-green-500" : "text-red-500"} w-10 h-10 md:w-15 md:h-15`}>
-              {playerOverlay2}
-            </span>
-          )}
+    <div className="flex flex-col gap-4">
+      <h1 className={"bg-white rounded-lg text-xl md:text-2xl"}>Combat Round</h1>
+      <div className="grid gap-4 grid-cols-2 rounded-lg justify-center">
+        <div className="relative">
+          <div className="absolute inset-5 flex justify-between">
+            {playerModifierOverlay1 && (
+              <span className={`flex items-center justify-center text-lg md:text-xl font-bold bg-gray-200 rounded-full border border-black border-4 ${parseInt(playerModifierOverlay1) > 0 ? "text-green-500" : "text-red-500"} w-10 h-10 md:w-15 md:h-15`}>
+                {playerModifierOverlay1}
+              </span>
+            )}
+            {playerModifierOverlay2 && (
+              <span className={`flex items-center justify-center text-lg md:text-xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(playerModifierOverlay2) > 0 ? "text-green-500" : "text-red-500"} w-10 h-10 md:w-15 md:h-15`}>
+                {playerModifierOverlay2}
+              </span>
+            )}
+          </div>
+          <div className="bg-white rounded-lg">
+            <CombatEntity entity={player} />
+          </div>
+          <RollTable turn={playerTurn} triggerFunction={playerTrigger} setSelfOverlay={setPlayerModifierOverlay1} setOtherOverlay={setEnemyModifierOverlay1} isLast={enemyTurn.moveString === ""} start={true} />
         </div>
-        <div className="bg-white rounded-lg">
-          <CombatEntity entity={player} />
+        <div className="relative">
+          <div className="absolute inset-5 flex justify-between">
+            {enemyModifierOverlay1 && (
+              <span className={`flex items-center justify-center text-lg md:text-xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(enemyModifierOverlay1) > 0 ? "text-green-500" : "text-red-500"} w-10 h-10 md:w-15 md:h-15`}>
+                {enemyModifierOverlay1}
+              </span>
+            )}
+            {enemyModifierOverlay2 && (
+              <span className={`flex items-center justify-center text-lg md:text-xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(enemyModifierOverlay2) > 0 ? "text-green-500" : "text-red-500"} w-10 h-10 md:w-15 md:h-15`}>
+                {enemyModifierOverlay2}
+              </span>
+            )}
+          </div>
+          <div className="bg-white rounded-lg">
+            <CombatEntity entity={enemy} />
+          </div>
+          <div className={showEnemyTable && enemyTurn.moveString ? "" : "invisible"}>
+            <RollTable turn={enemyTurn} triggerFunction={enemyTrigger} setSelfOverlay={setEnemyModifierOverlay2} setOtherOverlay={setPlayerModifierOverlay2} isLast={true} start={showEnemyTable} />
+          </div>
         </div>
-        <RollTable turn={playerTurn} triggerFunction={playerTrigger} setSelfOverlay={setPlayerOverlay1} setOtherOverlay={setEnemyOverlay1} isLast={enemyTurn.moveString === ""} />
       </div>
-      <div className="relative">
-        <div className="absolute inset-5 flex justify-between">
-          {enemyOverlay1 && (
-            <span className={`flex items-center justify-center text-lg md:text-xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(enemyOverlay1) > 0 ? "text-green-500" : "text-red-500"} w-10 h-10 md:w-15 md:h-15`}>
-              {enemyOverlay1}
-            </span>
-          )}
-          {enemyOverlay2 && (
-            <span className={`flex items-center justify-center text-lg md:text-xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(enemyOverlay2) > 0 ? "text-green-500" : "text-red-500"} w-10 h-10 md:w-15 md:h-15`}>
-              {enemyOverlay2}
-            </span>
-          )}
-        </div>
-        <div className="bg-white rounded-lg">
-          <CombatEntity entity={enemy} />
-        </div>
-        {showEnemyTable && enemyTurn.moveString !== "" && (
-          <RollTable turn={enemyTurn} triggerFunction={enemyTrigger} setSelfOverlay={setEnemyOverlay2} setOtherOverlay={setPlayerOverlay2} isLast={true} />
-        )}
+      <div className={`${showClickText ? "text-white": "invisible"}`}>
+        Click or tap to continue
       </div>
     </div>
   );
