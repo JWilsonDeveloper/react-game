@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Turn } from '@/app/lib/definitions';
-import { Button } from '@/app/ui/button';
-import { Underdog } from 'next/font/google';
 
 interface RollTableProps {
     turn: Turn;
@@ -25,13 +23,11 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [overlayContent, setOverlayContent] = useState('');
 
-  const hasRoll = !!turn.roll;
-
   useEffect(() => {
     const interval = 60;
     let startTime = 300;
 
-    if(hasRoll){
+    if(turn.successRoll){
       const actions = [
         () => setShowMove(true),
         () => setShowLabel1(true),
@@ -69,24 +65,29 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
       setTimeout(() => {triggerFunction()}, triggerTimeout);
     }
     
-  }, [turn, triggerFunction, hasRoll]);
+  }, [turn, triggerFunction]);
 
   function triggerOverlay() {
     if (turn.success != undefined) {
-      if(turn.roll !== undefined){
-        setOverlayContent(turn.success ? 'HIT' : 'MISS');
+      if(turn.action.effect && turn.action.effect.target === 'OTHER'){
+        if(turn.successRoll?.roll === 20 ?? false){
+          setOverlayContent(turn.success ? 'CRITICAL HIT' : 'MISS');
+        }
+        else {
+          setOverlayContent(turn.success ? 'HIT' : 'MISS');
+        }
       }
       else {
         setOverlayContent(turn.success ? 'SUCCESS' : 'FAIL');
       }
       setOverlayVisible(true);
     }
-    if(turn.effect){
-      if(turn.target === 'SELF'){
-        setSelfOverlay(turn.effect);
+    if(turn.statChange){
+      if(turn.action.effect && turn.action.effect.target === 'SELF'){
+        setSelfOverlay(turn.statChange);
       }
       else{
-        setOtherOverlay(turn.effect);
+        setOtherOverlay(turn.statChange);
       }
     }
   };
@@ -109,7 +110,7 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
               </span>
             </td>
           </tr>
-          {hasRoll && (
+          {turn.successRoll && (
             <>
               <tr className="bg-white">
                 <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
@@ -119,7 +120,7 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
                 </td>
                 <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
                   <span className={showField1 ? '' : 'invisible'}>
-                    {turn.minimum}
+                    {turn.successRoll.minimum}
                   </span>
                 </td>
               </tr>
@@ -131,7 +132,7 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
                 </td>
                 <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
                   <span className={showField2 ? '' : 'invisible'}>
-                    +{turn.bonus}
+                    +{turn.successRoll.bonus}
                   </span>
                 </td>
               </tr>
@@ -143,7 +144,7 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
                 </td>
                 <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
                   <span className={showField3 ? '' : 'invisible'}>
-                    {turn.roll}
+                    {turn.successRoll.roll}
                   </span>
                 </td>
               </tr>
@@ -155,7 +156,7 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
                 </td>
                 <td className="border border-white p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
                   <span className={showField4 ? '' : 'invisible'}>
-                    {turn.total}
+                    {turn.successRoll.total}
                   </span>
                 </td>
               </tr>

@@ -21,7 +21,7 @@ interface StatBlockProps {
             <div className="p-2 border border-gray-200">XP: {entity.xp}</div>
             <div className="p-2 border border-gray-200">MP: {entity.currMP}/{entity.totalMP}</div>
             <div className="p-2 border border-gray-200">Armor: {entity.armor}</div>
-            <div className="p-2 border border-gray-200">Speed: {entity.speed}</div>
+            <div className="p-2 border border-gray-200">Speed: {entity.spd}</div>
         </div>
     }
 

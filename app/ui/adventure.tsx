@@ -1,322 +1,318 @@
 'use client'
 
 import React, { useState } from "react";
-import PlayerStats from '@/app/ui/player-stats';
 import EntityStats from '@/app/ui/entity-stats';
-import { Move, Action, Player, Entity, Turn } from '@/app/lib/definitions';
+import { Effect, Action, Player, Entity, Turn } from '@/app/lib/definitions';
 import {Button} from "@/app/ui/button";
 import AdventureTabs from "@/app/ui/adventure-tabs";
-import CombatEntity from "@/app/ui/combat-entity";
 import CombatRound from "./combat-round";
 
 interface AdventureProps {
-    player : Player;
-    setPlayer : Function;
-    enemies : Entity[];
-    setGainLevels : Function;
-    msg : string;
-    setMsg : Function;
-    setShopping : Function;
-    getTier : Function;
-    getEarnedLevel : Function;
-}
+    player: Player;
+    setPlayer: Function;
+    enemy: Entity;
+    setEnemy: Function;
+    enemies: Entity[];
+    msg: string;
+    setMsg: Function;
+    setShopping: Function;
+    getTier: Function;
+    getEarnedLevel: Function;
+    adventureState: string;
+    setAdventureState: Function;
+    levelUp: Function;
+  }
 
-export default function Adventure({player, setPlayer, enemies, setGainLevels, msg, setMsg, setShopping, getTier, getEarnedLevel} : AdventureProps) {
-    const [enemy, setEnemy] = useState(enemies[0]);
-    const [adventureState, setAdventureState] = useState('starting');
+  export default function Adventure({
+    player,
+    setPlayer,
+    enemy,
+    setEnemy,
+    enemies,
+    msg,
+    setMsg,
+    setShopping,
+    getTier,
+    getEarnedLevel,
+    adventureState,
+    setAdventureState,
+    levelUp
+  }: AdventureProps) {
     const [showOverlay, setShowOverlay] = useState(false);
-    const [overlayText, setOverlayText] = useState("");
-    const [playerTurn, setPlayerTurn] = useState({entityName : "", moveString: "", resultString: ""});
-    const [enemyTurn, setEnemyTurn] = useState({entityName : "", moveString: "", resultString: ""});
-    const [tempGainLevels, setTempGainLevels] = useState(0);
-    const hpBoost = getHPBoost(player);
-    const mpBoost = getMPBoost(player);
+    const [overlayText, setOverlayText] = useState("COMBAT ROUND");
+    const defaultPlayerTurn : Turn = {entity : player, moveString: "", resultString: "", success: false, action: player.abilityList[0]};
+    const defaultEnemyTurn : Turn = {entity : enemy, moveString: "", resultString: "", success: false, action: enemy.abilityList[0]};
+    const [round, setRound] = useState({playerTurn : defaultPlayerTurn, enemyTurn : defaultEnemyTurn});
+    const [gainLevelsCopy, setGainLevelsCopy] = useState(0);
 
-    function getDefense(player : Player){
-        let result = 10 + player.speed + player.armor;
-        for(let i=0; i < player.equipList.length; i++){
-            const equip = player.equipList[i];
-            if(equip.targetStat === "ARMOR"){
-                result += equip.effect;
-            }
-        }
-        return result;
-    }
-    function getHPBoost(player: Player){
-        let result = 0;
-        for(let i=0; i < player.equipList.length; i++){
-            const equip = player.equipList[i];
-            if(equip.targetStat === "HP"){
-                result += equip.effect;
-            }
-        }
-        return result;
-    }
-    function getMPBoost(player: Player){
-        let result = 0;
-        for(let i=0; i < player.equipList.length; i++){
-            const equip = player.equipList[i];
-            if(equip.targetStat === "MP"){
-                result += equip.effect;
-            }
-        }
-        return result;
-    }
-    function actionSelected(playerAction : Move){
-        let isEnemyTurn = false;
-        let playerEffect = 0;
-        let enemyEffect = 0;
-        let escaped = false;
+    function actionSelected(playerAction : Action){
         let tempMsg = msg;
-        let tempPlayer = player;
-        let tempEnemy = enemy;
-        let tempTempGainLevels = 0;
-        let tempPlayerTurn : Turn = {entityName : player.name, moveString: "", resultString: ""};
-        let tempEnemyTurn : Turn = {entityName : enemy.name, moveString: "", resultString: ""};
+        let escaped = false;
+        let playerCopy = {...player};
+        let enemyCopy = {...enemy};
+        let tempGainLevels = 0;
+        let playerTurn : Turn = defaultPlayerTurn;
+        let enemyTurn : Turn = defaultEnemyTurn;
 
-        function isActionSuccess(action : Action, active : Entity, target : Entity){
-            if(action.target === 'SELF'){
-                return true;
+        function getSuccessRoll(action: Action, isPlayerTurn : boolean) {
+            let minimum;
+            if (action.type === 'FLEE') {
+                minimum = Math.floor(Math.random() * 20) + 1 + (isPlayerTurn ? enemyCopy.spd : playerCopy.spd);
+            } else {
+                minimum = isPlayerTurn ?  10 + enemyCopy.spd + enemyCopy.armor : 10 + playerCopy.spd + playerCopy.armor;
             }
-            const successBonus = getSuccessBonus(action, active);
-            const atkRoll = Math.floor(Math.random() * 20) + 1;
-            const total = atkRoll + successBonus;
-            const defense = target === player ? getDefense(player) : 10 + enemy.speed + enemy.armor;
-            const turn : Turn = active === player ? tempPlayerTurn : tempEnemyTurn;
-            turn.minimum = defense;
-            turn.bonus = successBonus;
-            turn.roll = atkRoll;
-            turn.total = total;
-            if(total >= defense){
-                turn.success = true;
-                return true;
-            }
-            turn.success = false;
-            return false;
+            const bonus = isPlayerTurn ? getSuccessBonus(action, playerCopy) : getSuccessBonus(action, enemyCopy);
+            const roll = Math.floor(Math.random() * 20) + 1;
+            const total = roll + bonus;
+            return {minimum : minimum, bonus : bonus, roll : roll, total : total};
         }
-        function getSuccessBonus(move : Move, entity : Entity){
+
+        function getSuccessBonus(move : Action, entity : Entity) : number{
             let bonus = 0;
             if(move.successBonus){
                 bonus += move.successBonus;
             }
             if(move.skillBonus){
                 if(move.skillBonus.type === "SUCCESS"){
-                    bonus += move.skillBonus.skill === "SPEED" ? move.skillBonus.multiplier * entity.speed : move.skillBonus.multiplier * entity.strength;
+                    bonus += move.skillBonus.skill === "SPD" ? move.skillBonus.multiplier * entity.spd : move.skillBonus.multiplier * entity.str;
                 }
             }
             return bonus;
         }
-        function getEffectBonus(action : Action, entity : Entity){
+
+        function getEffectBonus(action : Action, entity : Entity) : number{
             let bonus = 0;
-            bonus += action.effectBonus;
+            if(action.effect?.effectBonus){
+                bonus += action.effect.effectBonus;
+            }
             if(action.skillBonus){
                 if(action.skillBonus.type === "EFFECT"){
-                    bonus += action.skillBonus.skill === "STRENGTH" ? action.skillBonus.multiplier * entity.strength : action.skillBonus.multiplier * entity.speed;
+                    bonus += action.skillBonus.skill === "STR" ? action.skillBonus.multiplier * entity.str : action.skillBonus.multiplier * entity.spd;
                 }
             }
             return bonus;
         }
-        function getEffect(action : Action, active : Entity){
-            let totalEffect= 0;
-            if(action.effectRoll){
-                for(let i = 0; i < action.effectRoll.quantity; i++){
-                    totalEffect += Math.floor(Math.random() * (action.effectRoll.rangeMax - action.effectRoll.rangeMin + 1)) + action.effectRoll.rangeMin;
+
+        function getStatChange(action : Action, actionEffect : Effect, active : Entity, critical : boolean) {
+            let statChange = 0;
+            if(actionEffect.effectRoll){
+                for(let i = 0; i < actionEffect.effectRoll.quantity; i++){
+                    statChange += Math.floor(Math.random() * (actionEffect.effectRoll.rangeMax - actionEffect.effectRoll.rangeMin + 1)) + actionEffect.effectRoll.rangeMin;
                 }
             }
-            totalEffect += getEffectBonus(action, active);
-            return action.statIncrease ? totalEffect : -totalEffect;
+            statChange += getEffectBonus(action, active);
+
+            // Double the effect on critical success
+            if(critical){
+                statChange *= 2;
+            }
+
+            return actionEffect.statIncrease ? statChange : -statChange;
         }
-        function tryRunAway(move : Move, active : Entity, nonActive : Entity){
-            const turn : Turn = active === player ? tempPlayerTurn : tempEnemyTurn;
-            const catchRoll = Math.floor(Math.random() * 20) + 1 + nonActive.speed;
-            const escapeRoll = Math.floor(Math.random() * 20) + 1;
-            const bonus = getSuccessBonus(move, active);
-            const total = escapeRoll + bonus;
-            turn.minimum = catchRoll;
-            turn.bonus = bonus;
-            turn.roll = escapeRoll;
-            turn.total = total;
-            if(total > catchRoll) {
-                turn.success = true;
-                return true;
-            }
-            else {
-                turn.success = false;
-                return false;
-            }
-        }
-        function hasEnoughMP(move : Move, active : Entity){
-            const activeMP = active === player ? active.currMP + mpBoost : active.currMP;
-            if(move.mpCost > activeMP){
-                return false;
-            }
-            return true;
-        }
-        function doAction(action : Action, active : Entity){
-            const target : Entity = (action.target === 'OTHER' && active === player) || (action.target === 'SELF' && active === enemy) ? enemy : player;
-            let effect = 0;
-            const turn : Turn = active === player ? tempPlayerTurn : tempEnemyTurn;
-            turn.target = action.target;
-            tempMsg += `\n${active.name} used ${action.name}!`;
-            turn.moveString = `${active.name} used ${action.name}!`;
-            turn.effect = 0;
-            const success = isActionSuccess(action, active, target);
-            if(success){
-                effect = getEffect(action, active);
-                turn.effect = effect;
-                if(effect > 0){
-                    turn.resultString = `${target.name}'s ${action.targetStat} was increased by ${effect}!`
-                    tempMsg += `\n${target.name}'s ${action.targetStat} was increased by ${effect}!`;
+
+        function applyStatChange(actionEffect: Effect, effect: number, isPlayer: boolean) {
+            let tempSelf: Player | Entity = isPlayer ? playerCopy : enemyCopy;
+            let tempOther: Player | Entity = isPlayer ? enemyCopy : playerCopy;
+    
+            if (actionEffect.target === 'OTHER') {
+                if (actionEffect.stat === 'HP') {
+                    tempOther.currHP += effect;
+                } else if (actionEffect.stat === 'MP') {
+                    tempOther.currMP += effect;
                 }
-                else if(effect < 0){
-                    turn.resultString = `${target.name}'s ${action.targetStat} was reduced by ${Math.abs(effect)}!`;
-                    tempMsg += `\n${target.name}'s ${action.targetStat} was reduced by ${Math.abs(effect)}!`;
-                }
-                else {
-                    turn.resultString = `\nNo effect!`;
-                    tempMsg += `\nNo effect!`;
+            } else {
+                if (actionEffect.stat === 'HP') {
+                    tempSelf.currHP += effect;
+                } else if (actionEffect.stat === 'MP') {
+                    tempSelf.currMP += effect;
                 }
             }
-            else{
-                tempMsg += `\n${active.name}'s attack missed!`;
-                turn.resultString = `${active.name}'s attack missed!`;
+            if (isPlayer) {
+                playerCopy = tempSelf as Player;
+                enemyCopy = tempOther as Entity;
+            } else {
+                enemyCopy = tempSelf as Entity;
+                playerCopy = tempOther as Player;
             }
-            return effect;
-        }
-        function handlePlayerEffect(action : Action, effect : number){
-            if(action.target === 'OTHER'){
-                tempPlayer = {...player, currMP: (player.currMP - action.mpCost)};
-                if(action.targetStat === 'HP'){
-                    tempEnemy = {...enemy, currHP: (enemy.currHP + effect)};
-                }
-                else if(action.targetStat === 'MP'){
-                    tempEnemy = {...enemy, currMP: (enemy.currMP + effect)};
-                }
-            }
-            else{
-                if(action.targetStat === 'HP'){
-                    tempPlayer = {...player, currHP: player.currHP + effect, currMP: (player.currMP - action.mpCost)};
-                }
-                else if(action.targetStat === 'MP'){
-                    tempPlayer = {...player, currMP: (player.currMP - action.mpCost + effect)};
-                }
-            }
-        }
-        function handleEnemyEffect(action : Action, effect : number){
-            if(action.target === 'OTHER'){
-                tempEnemy = {...tempEnemy, currMP: (tempEnemy.currMP - action.mpCost)};
-                if(action.targetStat === 'HP'){
-                    tempPlayer = {...tempPlayer, currHP: (tempPlayer.currHP + effect)};
-                }
-                else if(action.targetStat === 'MP'){
-                    tempPlayer = {...tempPlayer, currMP: (tempPlayer.currMP + effect)};
-                }
-            }
-            else{
-                if(action.targetStat === 'HP'){
-                    tempEnemy = {...tempEnemy, currHP: tempEnemy.currHP + effect, currMP: (tempEnemy.currMP - action.mpCost)};
-                }
-                else if(action.targetStat === 'MP'){
-                    tempEnemy = {...tempEnemy, currMP: (tempEnemy.currMP - action.mpCost + effect)}
-                }
-            }
-        }
+        }        
         function handleResult(){
-            const playerDown = tempPlayer.currHP + hpBoost <= 0;
-            const enemyDown = tempEnemy.currHP <= 0;
+            tempMsg += `\n${playerTurn.moveString}`;
+            tempMsg += `\n${playerTurn.resultString}`;
+            if(enemyTurn.moveString !== ""){
+                tempMsg += `\n${enemyTurn.moveString}`;
+                tempMsg += `\n${enemyTurn.resultString}`;
+            }
+            const playerDown = playerCopy.currHP <= 0;
+            const enemyDown = enemyCopy.currHP <= 0;
             if(escaped || playerDown || enemyDown){
                 if(escaped || !playerDown){
                     if(!escaped){
-                        tempMsg += `\n${player.name} defeated ${enemy.name}!`;
+                        tempMsg += `\n${playerCopy.name} defeated ${enemy.name}!`;
                         tempMsg += `\nGained ${enemy.xp}XP and ${enemy.gp}GP!`;
-                        tempPlayer = {...tempPlayer, gp: tempPlayer.gp + enemy.gp, xp: tempPlayer.xp + enemy.xp};
-                        const earnedLevel = getEarnedLevel(tempPlayer.xp);
-                        if(tempPlayer.level < earnedLevel){
-                            tempTempGainLevels = earnedLevel - tempPlayer.level;
+                        playerCopy = {...playerCopy, gp: playerCopy.gp + enemy.gp, xp: playerCopy.xp + enemy.xp};
+                        const earnedLevel = getEarnedLevel(playerCopy.xp);
+                        if(playerCopy.level < earnedLevel){
+                            tempGainLevels = earnedLevel - playerCopy.level;
                         }
                     }
-                    if(!(tempTempGainLevels > 0)){
+                    if(!(tempGainLevels > 0)){
                         setAdventureState('betweenBattles');
                     } 
                     else{
-                        setTempGainLevels(tempTempGainLevels);
+                        setGainLevelsCopy(tempGainLevels);
                         setAdventureState('levelUp');
                     } 
                 }
                 else {
-                    tempMsg += `\n${player.name} was defeated by ${enemy.name}!`;
+                    tempMsg += `\n${playerCopy.name} was defeated by ${enemyCopy.name}!`;
                     setAdventureState('gameOver');
                 }
             }
-            setPlayerTurn(tempPlayerTurn);
-            setEnemyTurn(tempEnemyTurn);
+            setRound({playerTurn: playerTurn, enemyTurn: enemyTurn});
             setShowOverlay(true);
-            setEnemy(tempEnemy);
-            setPlayer(tempPlayer);
-            setMsg(tempMsg);
-            console.log(tempMsg);
+            setEnemy(enemyCopy);
+            setPlayer(playerCopy);
         }
 
-        if(player.currHP + hpBoost> 0){
-            // Player Turn
-            if(hasEnoughMP(playerAction, player)){
-                if(playerAction.type === "FLEE"){
-                    tempPlayerTurn.moveString = `${player.name} used ${playerAction.name}!`;
-                    tempMsg += `\n${player.name} used ${playerAction.name}!`
-                    escaped = tryRunAway(playerAction, player, enemy);
-                    if(escaped){
-                        tempPlayerTurn.resultString = `${player.name} escaped from ${enemy.name}!`;
-                        tempMsg += `\n${player.name} escaped from ${enemy.name}!`;
-                    }
-                    else{
-                        tempPlayerTurn.resultString = `${player.name} was not able to get away!`;
-                        tempMsg += `\n${player.name} was not able to get away!`;
-                        isEnemyTurn = true;
-                    }
+        function getEnemyAction() : Action {
+            // Select a random ability
+            let randomIndex = Math.floor(Math.random() * enemy.abilityList.length);
+            while(enemyCopy.abilityList[randomIndex].mpCost > enemyCopy.currMP){
+                randomIndex = Math.floor(Math.random() * enemy.abilityList.length);
+            }
+            return enemyCopy.abilityList[randomIndex];
+        }
+
+        function handleTurn(action : Action, isPlayerTurn: boolean) : Turn {
+            const active = isPlayerTurn ? playerCopy : enemyCopy;
+
+            // Get success
+            let success : boolean;
+            let successRoll;
+            if(action.effect && action.effect.target === 'SELF'){
+                // Automatically succeed if targeting self
+                success = true;
+            }
+            else{
+                // Get successRoll
+                successRoll = getSuccessRoll(action, isPlayerTurn);
+                success = successRoll.roll === 20 || successRoll.total >= successRoll.minimum;
+            }
+
+            // Reduce MP
+            active.currMP -= action.mpCost;
+
+            // Get statChange and apply it to the stats
+            let statChange = 0;
+            if(success) {
+                if(action.effect){
+                    // On a success, get the statChange if the action has an effect
+                    const critical : boolean = successRoll?.roll === 20 ?? false;
+                    statChange = getStatChange(action, action.effect, active, critical);
+
+                     // Update stats
+                    applyStatChange(action.effect, statChange, isPlayerTurn);
                 }
                 else{
-                    playerEffect = doAction(playerAction as Action, player);
-                    handlePlayerEffect(playerAction as Action, playerEffect);
-                    isEnemyTurn = true;
+                    escaped = true;
                 }
             }
-            else{
-                tempMsg += "\nInsufficient MP!";
-            }
-            setMsg(tempMsg);
-            console.log(tempMsg);
 
-            // Enemy Turn
-            if(isEnemyTurn && tempEnemy.currHP > 0){
-                //setTimeout(() =>{
-                    let randomIndex = Math.floor(Math.random() * enemy.actionList.length);
-                    let enemyAttack = enemy.actionList[randomIndex];
-                    while(!hasEnoughMP(enemyAttack, enemy)){
-                        randomIndex = Math.floor(Math.random() * enemy.actionList.length);
-                        enemyAttack = enemy.actionList[randomIndex];
-                    }
-                    enemyEffect = doAction(enemyAttack as Action, enemy);
-                    handleEnemyEffect(enemyAttack as Action, enemyEffect);
-                    handleResult(); 
-                //}, 100);
+            // Get moveString
+            const moveString = `${active.name} used ${action.name}!`;
+            
+            // Get resultString
+            let resultString;
+            if(action.effect){
+                if(success){
+                    const targetEntity : Entity = (action.effect.target === 'OTHER' && active === playerCopy) || (action.effect.target === 'SELF' && active === enemyCopy) ? enemyCopy : playerCopy;
+                    resultString = 
+                        statChange !== 0 
+                        ?   statChange > 0
+                            ?   `${targetEntity.name}'s ${action.effect.stat} was increased by ${Math.abs(statChange)}!`
+                            :   `${targetEntity.name}'s ${action.effect.stat} was reduced by ${Math.abs(statChange)}!`
+                        :   `\nNo effect!`;
+                }
+                else {
+                    resultString = `${active.name} missed!`
+                }
             }
-            else{
-                handleResult();
+            else {
+                if(success){
+                    resultString = `${active.name} escaped!`;
+                }
+                else{
+                    resultString = `${active.name} couldn't escape!`;
+                }
             }
+            // Construct and return the Turn object
+            const turn: Turn = {
+                entity: active,
+                action: action,
+                moveString: moveString,
+                resultString: resultString,
+                success: success,
+                statChange: statChange,
+                ...(successRoll && { successRoll: successRoll }) // Include successRoll if it exists
+            };
+            return turn;
         }
+        
+        if(playerCopy.currMP < playerAction.mpCost){
+            tempMsg += "\nInsufficient MP!";
+        }
+        else if(playerCopy.currHP <= 0){
+            tempMsg += "\nPlayer defeated!";
+        }
+        else{
+            playerTurn = handleTurn(playerAction, true);
+            if(enemyCopy.currHP > 0 && !escaped) {
+                const enemyAction = getEnemyAction();
+                enemyTurn = handleTurn(enemyAction, false);
+            }
+            handleResult();
+        }
+
+        // Print messages
+        setMsg(tempMsg);
+        console.log(tempMsg);
     }
 
-    function getEnemy(){
+    function getEnemy() {
         // Find enemies with levels within one level above or below the player's level
         const levelRange = 1;
         const filteredEnemies = enemies.filter(enemy =>
-          Math.abs(enemy.level - player.level) <= levelRange
+            Math.abs(enemy.level - player.level) <= levelRange
         );
       
-        // Select a random enemy from the filtered list
-        const randomIndex = Math.floor(Math.random() * filteredEnemies.length);
-        return filteredEnemies[randomIndex];
-    }
+        let enemyLevel;
+        if (player.level === 1) {
+            // Special case when player's level is 1
+            const rand = Math.random();
+            if (rand < 0.8) {
+                enemyLevel = player.level; // 80% chance of same level
+            } else {
+                enemyLevel = player.level + 1; // 20% chance of one level higher
+            }
+        } else {
+            const rand = Math.random();
+            if (rand < 0.6) {
+                enemyLevel = player.level; // 60% chance of same level
+            } else if (rand < 0.8) {
+                enemyLevel = player.level - 1; // 20% chance of one level lower
+            } else {
+                enemyLevel = player.level + 1; // 20% chance of one level higher
+            }
+        }
+      
+        // Filter enemies again based on the selected enemy level
+        const suitableEnemies = filteredEnemies.filter(enemy => enemy.level === enemyLevel);
+      
+        // Select a random enemy from the suitable list
+        const randomIndex = Math.floor(Math.random() * suitableEnemies.length);
+        return suitableEnemies[randomIndex];
+      }
+      
 
     function nextBattle() {
         // Update state with the selected enemy
@@ -338,7 +334,7 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
     return (
         <div className="relative flex flex-col gap-4 w-full text-center bg-black rounded-lg">
             {adventureState === 'betweenBattles' && (
-                <div className="absolute inset-0 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
+                <div className="absolute inset-0 z-10 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
                 <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">You Survived!</h1>
                     <Button buttonText="Next Battle!" className="w-full mb-4" onClick={nextBattle} />
@@ -347,7 +343,7 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
                 </div>
             )}
             {adventureState === 'starting' && (
-                <div className="absolute inset-0 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
+                <div className="absolute inset-0 z-10 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
                 <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">Time to adventure!</h1>
                     <Button buttonText="Next Battle!" className="w-full" onClick={startAdventure} />
@@ -355,22 +351,22 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
                 </div>
             )}
             {adventureState === 'levelUp' && getEarnedLevel(player.xp) < 5 && (
-                <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-75">
+                <div className="absolute inset-0 z-10 flex justify-center items-center bg-white bg-opacity-75">
                 <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">You reached enough XP to level up!</h1>
-                    <Button buttonText="Level up!" className="w-full" onClick={() => setGainLevels(tempGainLevels)} />
+                    <Button buttonText="Level up!" className="w-full" onClick={() => levelUp(gainLevelsCopy)} />
                 </div>
                 </div>
             )}
             {adventureState === 'levelUp' && getEarnedLevel(player.xp) >= 5 && (
-                <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-75">
+                <div className="absolute inset-0 z-10 flex justify-center items-center bg-white bg-opacity-75">
                 <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">You reached level 5! You win!</h1>
                 </div>
                 </div>
             )}
             {adventureState === 'gameOver' && (
-                <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-75">
+                <div className="absolute inset-0 z-10 flex justify-center items-center bg-white bg-opacity-75">
                 <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">{player.name} was defeated by {enemy.name}</h1>
                 </div>
@@ -391,12 +387,12 @@ export default function Adventure({player, setPlayer, enemies, setGainLevels, ms
             </div>
             {showOverlay && (
                 <div
-                    className="fixed inset-0 flex items-center justify-center bg-black"
+                    className="fixed inset-0 z-10 flex items-center justify-center bg-black"
                     style={{ whiteSpace: "pre-wrap" }} // Ensure new lines are preserved
                     >
                     <div className="flex-col text-center">
-                        <h1 className="text-xl font-bold mb-4">{overlayText}</h1>
-                        <CombatRound player={player} enemy={enemy} playerTurn={playerTurn} enemyTurn={enemyTurn} setShowOverlay={setShowOverlay}/>
+                        <h1 className="text-xl border-black rounded-lg bg-white font-bold mb-4">{overlayText}</h1>
+                        <CombatRound round={round} setShowOverlay={setShowOverlay}/>
                     </div>
                 </div>
             )}

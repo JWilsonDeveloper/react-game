@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import ActionTable from '@/app/ui/action-table';
-import { Player, Move } from '@/app/lib/definitions';
+import AbilityTable from '@/app/ui/ability-table';
+import { Player, Action } from '@/app/lib/definitions';
 
 interface LevelingTabsProps {
   tempPlayer: Player;
   actionSelected: Function;
-  moves: Move[];
+  moves: Action[];
   getTier: Function;
 }
 
@@ -13,12 +13,13 @@ export default function LevelingTabs({ tempPlayer, actionSelected, moves, getTie
   const [activeTab, setActiveTab] = useState('purchase');
 
   const filteredActions = moves.filter(move => {
+    // Include all unpurchased spells regardless of tier
     if (move.type === 'SPELL') {
-      return !tempPlayer.actionList.some(m => m.type === 'SPELL' && m.id === move.id);
+      return !tempPlayer.abilityList.some(m => m.type === 'SPELL' && m.id === move.id);
     }
-    const index = tempPlayer.actionList.findIndex(m => m.type === move.type);
-    // If a matching type is found and its tier is less than the current action's tier
-    return index !== -1 && move.tier > tempPlayer.actionList[index].tier;
+    const index = tempPlayer.abilityList.findIndex(m => m.type === move.type);
+    // If an ability has a lower tier than the player ability of the same type, filter it out
+    return index !== -1 && move.tier > tempPlayer.abilityList[index].tier;
   });
 
   return (
@@ -29,32 +30,34 @@ export default function LevelingTabs({ tempPlayer, actionSelected, moves, getTie
               className={`flex-1 px-2 py-1 rounded-tl-lg sm:px-4 sm:py-2 text-xs sm:text-base ${activeTab === 'current' ? 'bg-white' : 'bg-gray-200'}`}
               onClick={() => setActiveTab('current')}
             >
-              Current Actions
+              Current Abilities
             </button>
             <button
               className={`flex-1 px-2 py-1 rounded-tr-lg sm:px-4 sm:py-2 text-xs sm:text-base ${activeTab === 'purchase' ? 'bg-white' : 'bg-gray-200'}`}
               onClick={() => setActiveTab('purchase')}
             >
-              Purchase Actions
+              Purchase Abilities
             </button>
           </div>
           <div className="p-2 sm:p-4 rounded-lg bg-white">
             {activeTab === 'current' && (
-              <ActionTable
-                actions={tempPlayer.actionList}
+              <AbilityTable
+                actions={tempPlayer.abilityList}
                 actionClicked={() => { }}
                 entity={tempPlayer}
                 getTier={getTier}
                 showCost={false}
+                adventuring={false}
               />
             )}
             {activeTab === 'purchase' && (
-              <ActionTable
+              <AbilityTable
                 actions={filteredActions}
                 actionClicked={actionSelected}
                 entity={tempPlayer}
                 getTier={getTier}
                 showCost={true}
+                adventuring={false}
               />
             )}
           </div>

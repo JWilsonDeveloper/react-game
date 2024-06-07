@@ -19,7 +19,7 @@ export default function XPBar({ player, getEarnedLevel }: XPBarProps) {
     } else if (currentXP < 200) {
       return 200;
     } else {
-      return 750;
+      return 600;
     }
   }
 

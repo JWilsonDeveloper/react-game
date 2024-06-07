@@ -10,7 +10,7 @@ export default function PlayerStats({ entity }: PlayerStatsProps) {
   const [isStacked, setIsStacked] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
 
-  let defense = 10 + entity.speed + entity.armor;
+  let defense = 10 + entity.spd + entity.armor;
   let hpBoost = 0;
   let mpBoost = 0;
   if((entity as Player).equipList !== undefined){
@@ -22,10 +22,10 @@ export default function PlayerStats({ entity }: PlayerStatsProps) {
   
 
   function getDefense(player: Player) {
-    let result = 10 + player.speed + player.armor;
+    let result = 10 + player.spd + player.armor;
     for (let i = 0; i < player.equipList.length; i++) {
       const equip = player.equipList[i];
-      if (equip.targetStat === "ARMOR") {
+      if (equip.stat === "ARM") {
         result += equip.effect;
       }
     }
@@ -36,7 +36,7 @@ export default function PlayerStats({ entity }: PlayerStatsProps) {
     let result = 0;
     for (let i = 0; i < player.equipList.length; i++) {
       const equip = player.equipList[i];
-      if (equip.targetStat === "HP") {
+      if (equip.stat === "HP") {
         result += equip.effect;
       }
     }
@@ -47,7 +47,7 @@ export default function PlayerStats({ entity }: PlayerStatsProps) {
     let result = 0;
     for (let i = 0; i < player.equipList.length; i++) {
       const equip = player.equipList[i];
-      if (equip.targetStat === "MP") {
+      if (equip.stat === "MP") {
         result += equip.effect;
       }
     }
@@ -94,8 +94,8 @@ export default function PlayerStats({ entity }: PlayerStatsProps) {
         </div>
         <div className="justify-center flex flex-col items-center">
           <div className="grid grid-cols-2">
-            <div className="lg:p-1 text-base lg:text-sm text-xs">STR: {entity.strength}</div>
-            <div className="lg:p-1 text-base lg:text-sm text-xs">SPD: {entity.speed}</div>
+            <div className="lg:p-1 text-base lg:text-sm text-xs">STR: {entity.str}</div>
+            <div className="lg:p-1 text-base lg:text-sm text-xs">SPD: {entity.spd}</div>
             <div className="lg:p-1 text-base lg:text-sm text-xs">Armor: {entity.armor}</div>
             <div className="lg:p-1 text-base lg:text-sm text-xs">Defense: {defense}</div>
             <div className="lg:p-1 text-base lg:text-sm text-xs">GP: {entity.gp}</div>

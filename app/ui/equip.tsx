@@ -1,4 +1,4 @@
-import { Entity, Player, Move, Action, Item, EffectRoll } from "@/app/lib/definitions";
+import { Entity, Player, Action, A, I, EffectRoll } from "@/app/lib/definitions";
 import {Button} from "@/app/ui/button";
 import { get } from "http";
 import { Equipment } from "@/app/lib/definitions";
@@ -14,12 +14,12 @@ interface EquipProps {
 export default function Equip({ equipment, className, showCost, equipClicked} : EquipProps) {
   //const tieredClass = className ? className + " " + getClass(equipment) : getClass(equipment); 
 
-  function getEffectBonus(action : Action, entity : Entity){
+  function getEffectBonus(action : A, entity : Entity){
     let bonus = 0;
     bonus += action.effectBonus;
     if(action.skillBonus){
         if(action.skillBonus.type === "EFFECT"){
-            bonus += action.skillBonus.skill === "STRENGTH" ? action.skillBonus.multiplier * entity.strength : action.skillBonus.multiplier * entity.speed;
+            bonus += action.skillBonus.skill === "STRENGTH" ? action.skillBonus.multiplier * entity.str : action.skillBonus.multiplier * entity.spd;
         }
     }
     return bonus;
@@ -37,7 +37,7 @@ export default function Equip({ equipment, className, showCost, equipClicked} : 
             {showCost ? <div>Cost:</div> : ""}
           </div>
           <div className="text-left">
-            {"+" + equipment.effect + " " + equipment.targetStat}<br />
+            {"+" + equipment.effect + " " + equipment.stat}<br />
             {showCost ? equipment.cost + " GP" : ""}
           </div>
         </div>

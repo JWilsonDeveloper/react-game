@@ -24,7 +24,7 @@ interface StatsProps {
                 <div className="p-2 border border-gray-200">XP: {player.xp}</div>
                 <div className="p-2 border border-gray-200">MP: {player.currMP}/{player.totalMP}</div>
                 <div className="p-2 border border-gray-200">Armor: {player.armor}</div>
-                <div className="p-2 border border-gray-200">Speed: {player.speed}</div>
+                <div className="p-2 border border-gray-200">Speed: {player.spd}</div>
             </div>
             </div>
             <div className="flex flex-col items-center">

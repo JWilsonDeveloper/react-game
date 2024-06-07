@@ -1,0 +1,44 @@
+/* styles.css */
+.disabled-button {
+pointer-events: none;
+background-color: grey;
+}
+
+.allow-pointer-events {
+pointer-events: auto;
+}
+  
+.info-text {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  
+  .tooltip-container {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .tooltip {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    margin-top: 8px;
+  }
+  
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent rgba(0, 0, 0, 0.75) transparent;
+  }

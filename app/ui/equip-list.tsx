@@ -1,5 +1,5 @@
 import MoveButton from '@/app/ui/move-button';
-import { Move, Player} from '../lib/definitions';
+import { Action, Player} from '../lib/definitions';
 import Equip from '@/app/ui/equip';
 
 interface EquipListProps {

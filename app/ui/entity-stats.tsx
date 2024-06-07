@@ -8,173 +8,99 @@ interface EntityStatsProps {
 }
 
 export default function EntityStats({ entity, hideGPAP }: EntityStatsProps) {
-  //const [isStacked, setIsStacked] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  let defense = 10 + entity.spd + entity.armor;
+  const [isTwoColumn, setIsTwoColumn] = useState(true);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const isPlayer = (entity as Player).equipList !== undefined;
 
-  let defense = 10 + entity.speed + entity.armor;
-  let hpBoost = 0;
-  let mpBoost = 0;
-  if ((entity as Player).equipList !== undefined) {
-    const playerCast = entity as Player;
-    defense = getDefense(playerCast);
-    hpBoost = getHPBoost(playerCast);
-    mpBoost = getMPBoost(playerCast);
-  }
-
-  function getDefense(player: Player) {
-    let result = 10 + player.speed + player.armor;
-    for (let i = 0; i < player.equipList.length; i++) {
-      const equip = player.equipList[i];
-      if (equip.targetStat === "ARMOR") {
-        result += equip.effect;
-      }
+  const checkWidth = () => {
+    if (gridRef.current) {
+      const width = gridRef.current.offsetWidth;
+      setIsTwoColumn(width < 170); // Adjust this value based on your requirements
     }
-    return result;
-  }
+  };
 
-  function getHPBoost(player: Player) {
-    let result = 0;
-    for (let i = 0; i < player.equipList.length; i++) {
-      const equip = player.equipList[i];
-      if (equip.targetStat === "HP") {
-        result += equip.effect;
-      }
-    }
-    return result;
-  }
-
-  function getMPBoost(player: Player) {
-    let result = 0;
-    for (let i = 0; i < player.equipList.length; i++) {
-      const equip = player.equipList[i];
-      if (equip.targetStat === "MP") {
-        result += equip.effect;
-      }
-    }
-    return result;
-  }
-
-  /*
   useEffect(() => {
-    const handleResize = () => {
-      if (containerRef.current) {
-        setIsStacked(containerRef.current.clientWidth < 300); // Adjust this value based on your needs
-      }
-    };
+    if(isPlayer){
+      window.addEventListener('resize', checkWidth);
+      checkWidth(); // Initial check
 
-    window.addEventListener("resize", handleResize);
-    handleResize(); // Initial check
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+      return () => {
+        window.removeEventListener('resize', checkWidth);
+      };
+    }
   }, []);
-  */
+
 
   return (
-    <div
-      ref={containerRef}
-      className="flex-col w-full gap-2 border border-black rounded-lg p-2 h-full items-center justify-center grid-cols-1"
-    >
+    <div className="flex flex-col w-full gap-2 border border-black rounded-lg p-2 items-center justify-center h-full">
       <div className="flex flex-col items-center justify-center">
         <Image
           src={entity.imgSrc}
           width={100}
           height={76}
-          className="w-full h-auto min-w-[85px] max-w-[150px]" // Make the image responsive
-          alt="Player image"
+          className="w-full h-auto min-w-[85px] max-w-[150px]"
+          alt="Entity image"
         />
       </div>
-      <div className="flex flex-col items-center h-full justify-start gap-2">
-        <div className="flex flex-col">
+      <div className="flex flex-col items-center justify-start gap-2 w-full flex-grow">
+        <div className="flex flex-col w-full">
           <h1 className="text-lg md:text-xl lg:text-2xl font-bold mb-1">
             {entity.name}
           </h1>
-          <div className="text-base md:text-lg lg:text-xl">
-            HP: {entity.currHP + hpBoost}/{entity.totalHP + hpBoost}
+          <div className="text-base md:text-lg lg:text-xl mb-1">
+            HP: {entity.currHP}/{entity.totalHP}
           </div>
-          {(entity as Player).equipList !== undefined ?
-          <div className="justify-center flex flex-col items-center text-right">
-            <div className="text-base md:text-lg lg:text-xl">
-              MP: {entity.currMP + mpBoost}/{entity.totalMP + mpBoost}
-            </div>
-            <div className="grid lg:grid-cols-2 grid-cols-1">
-              <div className="lg:p-1 text-base lg:text-sm text-xs">
-                Defense: {defense}
-              </div>
-              <div className="lg:p-1 text-base lg:text-sm text-xs">
-                Armor: {entity.armor}
-              </div>
-              <div className="lg:p-1 text-base lg:text-sm text-xs">
-                SPD: {entity.speed}
-              </div>
-              <div className="lg:p-1 text-base lg:text-sm text-xs">
-                STR: {entity.strength}
-              </div>
-              {!hideGPAP && 
-                <div className="lg:p-1 text-base lg:text-sm text-xs">
-                  GP: {entity.gp}
-                </div>
-              }
-               {!hideGPAP && 
-              <div className="lg:p-1 text-base lg:text-sm text-xs">
-                AP: {(entity as Player).ap}
-              </div>
-              }
-              
-            </div>
+          <div className={`text-base md:text-lg lg:text-xl mb-1 ${isPlayer ? '' : 'invisible'}`}>
+            MP: {entity.currMP}/{entity.totalMP}
           </div>
-          :
-          <div className="lg:p-1 text-base lg:text-sm text-xs">
-            Defense: {defense}
-          </div>
-          /*
-            ? 
-              <div className="text-sm md:text-base lg:text-lg mt-1">
-                MP: {entity.currMP + mpBoost}/{entity.totalMP + mpBoost}
-              </div>
-            :
-              <div className="text-sm md:text-base lg:text-lg mt-1">
-                MP: ?/?
-              </div>
-              */
-          }
         </div>
-        {/*
-        <div className="justify-center flex flex-col items-center">
-          <div className="grid lg:grid-cols-2 grid-cols-1">
-            <div className="lg:p-1 text-base lg:text-sm text-xs">
-              STR: {entity.strength}
-            </div>
-            <div className="lg:p-1 text-base lg:text-sm text-xs">
-              SPD: {entity.speed}
-            </div>
-            <div className="lg:p-1 text-base lg:text-sm text-xs">
-              Armor: {entity.armor}
-            </div>
-            <div className="lg:p-1 text-base lg:text-sm text-xs">
-              Defense: {defense}
-            </div>
-            {(entity as Player).equipList !== undefined ? (
-              <div className="lg:p-1 text-base lg:text-sm text-xs">
-                GP: {entity.gp}
-              </div>
-            )
-            :<div className="lg:p-1 text-base lg:text-sm text-xs invisible">-</div>}
-            {(entity as Player).equipList !== undefined && (
-              <div className="lg:p-1 text-base lg:text-sm text-xs">
-                AP: {(entity as Player).ap}
-              </div>
+        <div className="flex flex-col flex-grow w-full justify-center">
+          <div ref={gridRef} className={`grid gap-2 text-right ${isTwoColumn ? 'grid-cols-2' : 'grid-cols-4'}`}>
+            <div className="lg:text-sm text-xs">DEF:</div>
+            <div className="lg:text-sm text-xs text-left">{defense}</div>
+            {isPlayer && (
+              <>
+                <div className="lg:text-sm text-xs">ARM:</div>
+                <div className="lg:text-sm text-xs text-left">{entity.armor}</div>
+                <div className="lg:text-sm text-xs">SPD:</div>
+                <div className="lg:text-sm text-xs text-left">{entity.spd}</div>
+                <div className="lg:text-sm text-xs">STR:</div>
+                <div className="lg:text-sm text-xs text-left">{entity.str}</div>
+              </>
             )}
           </div>
-          {(entity as Player).equipList === undefined && (
-              <div className="lg:p-1 text-base lg:text-sm text-xs">
-                GP: {entity.gp}
-              </div>
-            )}
         </div>
-          */}
+        <div className="w-full">
+          {isPlayer ? (
+            <div className="flex flex-grow justify-between items-end">
+              <div className="grid grid-cols-[auto_auto] grid-rows-[auto_auto] gap-2">
+                {!hideGPAP && (
+                  <>
+                    <div className="lg:text-sm text-xs">GP:</div>
+                    <div className="lg:text-sm text-xs">{entity.gp}</div>
+                  </>
+                )}
+              </div>
+              <div className="grid grid-cols-[auto_auto] grid-rows-[auto_auto] gap-2">
+                {!hideGPAP && (
+                  <>
+                    <div className="lg:text-sm text-xs">AP:</div>
+                    <div className="lg:text-sm text-xs">{(entity as Player).ap}</div>
+                  </>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-grow items-end justify-center">
+              <div className="grid grid-cols-[auto_auto] grid-rows-[auto_auto] gap-2">
+                <div className="lg:text-sm text-xs">LVL:</div>
+                <div className="lg:text-sm text-xs">{entity.level}</div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  );
+  );  
 }

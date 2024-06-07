@@ -35,8 +35,8 @@ export default function ItemTable({ player, tempPlayer }: StatTableProps) {
             <td className="border border-white p-2">New</td>
           </tr>
           <tr className="bg-gray-200">
-            <td className="border border-white p-2">{player.strength}</td>
-            <td className="border border-white p-2">{tempPlayer.strength}</td>
+            <td className="border border-white p-2">{player.str}</td>
+            <td className="border border-white p-2">{tempPlayer.str}</td>
           </tr>
           <tr>
             <td className="border border-gray-200 p-2" rowSpan={2}>SPD</td>
@@ -44,8 +44,8 @@ export default function ItemTable({ player, tempPlayer }: StatTableProps) {
             <td className="border border-gray-200 p-2">New</td>
           </tr>
           <tr>
-            <td className="border border-gray-200 p-2">{player.speed}</td>
-            <td className="border border-gray-200 p-2">{tempPlayer.speed}</td>
+            <td className="border border-gray-200 p-2">{player.spd}</td>
+            <td className="border border-gray-200 p-2">{tempPlayer.spd}</td>
           </tr>
         </tbody>
       </table>

@@ -98,16 +98,15 @@ export type Entity = {
   totalHP: number;
   currMP: number;
   totalMP: number;
-  strength: number;
-  speed: number;
+  str: number;
+  spd: number;
   armor: number;
-  actionList: Move[];
+  abilityList: Action[];
 }
 
 export type Player = Entity & {
   ap: number;
-  flee: Move;
-  itemList: Item[];
+  itemList: Action[];
   equipList: Equipment[];
 }
 
@@ -116,10 +115,9 @@ export type Stats = {
   currMP: number;
 }
 
-export type Move = {
+export type Action = {
   id: number;
   name: string;
-  category: 'MOVE' | 'ACTION' | 'ITEM';
   type: 'MELEE' | 'RANGE' | 'SPELL' | 'FLEE' | 'HP Potion' | 'MP Potion' | 'Scroll';
   cost: number;
   mpCost: number;
@@ -127,29 +125,39 @@ export type Move = {
   tier: number;
   successBonus: number;
   skillBonus?: SkillBonus;
+  effect?: Effect;
+  uses?: number;
 }
 
-export type Action = Move & {
+export type Effect = {
   effectRoll: EffectRoll;
   effectBonus : number;
   target: 'SELF' | 'OTHER';
-  targetStat: 'HP' | 'MP';
+  stat: 'HP' | 'MP' | 'ARMOR' | 'SPEED' | 'STRENGTH';
+  statIncrease: boolean;
+}
+/*
+export type A = Action & {
+  effectRoll: EffectRoll;
+  effectBonus : number;
+  target: 'SELF' | 'OTHER';
+  targetStat: 'HP' | 'MP' | 'ARMOR' | 'SPEED' | 'STRENGTH';
   statIncrease: boolean;
 }
 
-export type Item = Action & {
+export type I = A & {
   uses: number;
-}
+}*/
 
 export type Equipment = {
   id: number;
   name: string;
-  targetStat: 'HP' | 'MP' | 'ARMOR' | 'SPEED' | 'STRENGTH';
+  stat: 'HP' | 'MP' | 'ARM' | 'SPD' | 'STR';
   effect: number;
   tier: number;
   cost: number;
   slot: number;
-  type: 'Armor' | 'Magic Item'
+  type: 'ARMOR' | 'MAGIC RING'
 }
 
 export type EffectRoll = {
@@ -161,20 +169,29 @@ export type EffectRoll = {
 
 export type SkillBonus = {
   id: number;
-  skill: 'STRENGTH' | 'SPEED';
+  skill: 'STR' | 'SPD';
   multiplier: number;
   type: 'SUCCESS' | 'EFFECT';
 }
 
 export type Turn = {
-  entityName: string;
+  entity: Entity | Player;
   moveString: string;
   resultString: string;
-  target?: 'SELF' | 'OTHER';
-  minimum?: number;
-  bonus?: number;
-  roll?: number;
-  total?: number;
-  success?: boolean;
-  effect?: number;
+  action: Action;
+  success : boolean;
+  successRoll? : SuccessRoll;
+  statChange?: number;
+}
+
+export type SuccessRoll = {
+  minimum: number;
+  bonus: number;
+  roll: number;
+  total: number;
+}
+
+export type Round = {
+  playerTurn: Turn;
+  enemyTurn: Turn;
 }

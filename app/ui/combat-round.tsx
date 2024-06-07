@@ -1,22 +1,24 @@
 import { useCallback, useState } from "react";
-import { Player, Entity, Turn } from "@/app/lib/definitions";
+import { Player, Entity, Turn , Round} from "@/app/lib/definitions";
 import CombatEntity from "@/app/ui/combat-entity";
-import MoveTable from "@/app/ui/roll-table";
+import RollTable from "@/app/ui/roll-table";
 
 interface CombatRoundProps {
-  player: Player;
-  enemy: Entity;
-  playerTurn: Turn;
-  enemyTurn: Turn;
+  round : Round;
   setShowOverlay: (show: boolean) => void;
 }
 
-export default function CombatRound({ player, enemy, playerTurn, enemyTurn, setShowOverlay }: CombatRoundProps) {
+export default function CombatRound({ round, setShowOverlay }: CombatRoundProps) {
   const [showEnemyTable, setShowEnemyTable] = useState(false);
   const [playerOverlay1, setPlayerOverlay1] = useState('');
   const [enemyOverlay1, setEnemyOverlay1] = useState('');
   const [playerOverlay2, setPlayerOverlay2] = useState('');
   const [enemyOverlay2, setEnemyOverlay2] = useState('');
+  const player = round.playerTurn.entity;
+  const enemy = round.enemyTurn.entity;
+  const playerTurn = round.playerTurn;
+  const enemyTurn = round.enemyTurn;
+
 
   const playerTrigger = useCallback(() => {
     if (enemyTurn.moveString === "") {
@@ -35,12 +37,12 @@ export default function CombatRound({ player, enemy, playerTurn, enemyTurn, setS
       <div className="relative">
         <div className="absolute inset-5 flex justify-between">
           {playerOverlay1 && (
-            <span className={`flex items-center justify-center text-2xl md:text-4xl font-bold bg-white rounded-full ${parseInt(playerOverlay1) > 0 ? "text-green-500" : "text-red-500"} w-16 h-16 md:w-24 md:h-24`}>
+            <span className={`flex items-center justify-center text-xl md:text-2xl font-bold bg-gray-200 rounded-full border border-black border-4 ${parseInt(playerOverlay1) > 0 ? "text-green-500" : "text-red-500"} w-8 h-8 md:w-12 md:h-12`}>
               {playerOverlay1}
             </span>
           )}
           {playerOverlay2 && (
-            <span className={`flex items-center justify-center text-2xl md:text-4xl font-bold bg-white rounded-full ${parseInt(playerOverlay2) > 0 ? "text-green-500" : "text-red-500"} w-16 h-16 md:w-24 md:h-24`}>
+            <span className={`flex items-center justify-center text-xl md:text-2xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(playerOverlay2) > 0 ? "text-green-500" : "text-red-500"} w-8 h-8 md:w-12 md:h-12`}>
               {playerOverlay2}
             </span>
           )}
@@ -48,17 +50,17 @@ export default function CombatRound({ player, enemy, playerTurn, enemyTurn, setS
         <div className="bg-white rounded-lg">
           <CombatEntity entity={player} />
         </div>
-        <MoveTable turn={playerTurn} triggerFunction={playerTrigger} setSelfOverlay={setPlayerOverlay1} setOtherOverlay={setEnemyOverlay1} isLast={enemyTurn.moveString === ""} />
+        <RollTable turn={playerTurn} triggerFunction={playerTrigger} setSelfOverlay={setPlayerOverlay1} setOtherOverlay={setEnemyOverlay1} isLast={enemyTurn.moveString === ""} />
       </div>
       <div className="relative">
         <div className="absolute inset-5 flex justify-between">
           {enemyOverlay1 && (
-            <span className={`flex items-center justify-center text-2xl md:text-4xl font-bold bg-white rounded-full ${parseInt(enemyOverlay1) > 0 ? "text-green-500" : "text-red-500"} w-16 h-16 md:w-24 md:h-24`}>
+            <span className={`flex items-center justify-center text-xl md:text-2xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(enemyOverlay1) > 0 ? "text-green-500" : "text-red-500"} w-8 h-8 md:w-12 md:h-12`}>
               {enemyOverlay1}
             </span>
           )}
           {enemyOverlay2 && (
-            <span className={`flex items-center justify-center text-2xl md:text-4xl font-bold bg-white rounded-full ${parseInt(enemyOverlay2) > 0 ? "text-green-500" : "text-red-500"} w-16 h-16 md:w-24 md:h-24`}>
+            <span className={`flex items-center justify-center text-xl md:text-2xl font-bold bg-gray-200 rounded-full border border-black border-2 ${parseInt(enemyOverlay2) > 0 ? "text-green-500" : "text-red-500"} w-8 h-8 md:w-12 md:h-12`}>
               {enemyOverlay2}
             </span>
           )}
@@ -67,7 +69,7 @@ export default function CombatRound({ player, enemy, playerTurn, enemyTurn, setS
           <CombatEntity entity={enemy} />
         </div>
         {showEnemyTable && enemyTurn.moveString !== "" && (
-          <MoveTable turn={enemyTurn} triggerFunction={enemyTrigger} setSelfOverlay={setEnemyOverlay2} setOtherOverlay={setPlayerOverlay2} isLast={true} />
+          <RollTable turn={enemyTurn} triggerFunction={enemyTrigger} setSelfOverlay={setEnemyOverlay2} setOtherOverlay={setPlayerOverlay2} isLast={true} />
         )}
       </div>
     </div>
