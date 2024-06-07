@@ -54,16 +54,16 @@ interface AdventureProps {
         let enemyTurn : Turn = defaultEnemyTurn;
 
         function getSuccessRoll(action: Action, isPlayerTurn : boolean) {
-            let minimum;
+            let target;
             if (action.type === 'FLEE') {
-                minimum = Math.floor(Math.random() * 20) + 1 + (isPlayerTurn ? enemyCopy.spd : playerCopy.spd);
+                target = Math.floor(Math.random() * 20) + 1 + (isPlayerTurn ? enemyCopy.spd : playerCopy.spd);
             } else {
-                minimum = isPlayerTurn ?  10 + enemyCopy.spd + enemyCopy.armor : 10 + playerCopy.spd + playerCopy.armor;
+                target = isPlayerTurn ?  10 + enemyCopy.spd + enemyCopy.armor : 10 + playerCopy.spd + playerCopy.armor;
             }
             const bonus = isPlayerTurn ? getSuccessBonus(action, playerCopy) : getSuccessBonus(action, enemyCopy);
             const roll = Math.floor(Math.random() * 20) + 1;
             const total = roll + bonus;
-            return {minimum : minimum, bonus : bonus, roll : roll, total : total};
+            return {target : target, bonus : bonus, roll : roll, total : total};
         }
 
         function getSuccessBonus(move : Action, entity : Entity) : number{
@@ -200,7 +200,7 @@ interface AdventureProps {
             else{
                 // Get successRoll
                 successRoll = getSuccessRoll(action, isPlayerTurn);
-                success = successRoll.roll === 20 || successRoll.total >= successRoll.minimum;
+                success = successRoll.roll === 20 || successRoll.total >= successRoll.target;
             }
 
             // Reduce MP
@@ -342,7 +342,7 @@ interface AdventureProps {
                 <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">You escaped!</h1>
                     <Button buttonText="Next Battle!" className="w-full mb-4" onClick={nextBattle} />
-                    <Button buttonText="Go Shopping!" className="w-full" onClick={() => setShopping(true)} />
+                    <Button buttonText="Shop" className="w-full" onClick={() => setShopping(true)} />
                 </div>
                 </div>
             )}
@@ -350,8 +350,8 @@ interface AdventureProps {
                 <div className="absolute inset-0 z-10 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
                 <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">Victory!</h1>
-                    <Button buttonText="Next Battle!" className="w-full mb-4" onClick={nextBattle} />
-                    <Button buttonText="Go Shopping!" className="w-full" onClick={() => setShopping(true)} />
+                    <Button buttonText="Ready for battle!" className="w-full mb-4" onClick={nextBattle} />
+                    <Button buttonText="Shop" className="w-full" onClick={() => setShopping(true)} />
                 </div>
                 </div>
             )}
@@ -359,7 +359,10 @@ interface AdventureProps {
                 <div className="absolute inset-0 z-10 flex justify-center items-center bg-white rounded-lg bg-opacity-75">
                 <div className="flex-col w-1/3">
                     <h1 className="text-xl font-bold mb-4">Time to adventure!</h1>
-                    <Button buttonText="Next Battle!" className="w-full" onClick={startAdventure} />
+                    <Button buttonText="Ready for battle!" className="w-full" onClick={startAdventure} />
+                    {player.level > 1 &&
+                        <Button buttonText="Shop" className="w-full" onClick={() => setShopping(true)} />
+                    }
                 </div>
                 </div>
             )}

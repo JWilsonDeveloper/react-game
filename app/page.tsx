@@ -176,7 +176,7 @@ const punch : Action = {
 const throwRock : Action = {
   id: 1,
   name: "Throw Rock",
-  type: 'RANGE',
+  type: 'RANGED',
   slot: 1,
   tier: 0,
   skillBonus: strength2Dmg,
@@ -229,7 +229,7 @@ const Club : Action = {
 const slingshot : Action = {
   id: 4,
   name: "Slingshot",
-  type: 'RANGE',
+  type: 'RANGED',
   slot: 1,
   tier: 1,
   skillBonus: speed2Atk,
@@ -282,7 +282,7 @@ const longsword : Action = {
 const crossbow : Action = {
   id: 7,
   name: "Crossbow",
-  type: 'RANGE',
+  type: 'RANGED',
   slot: 1,
   tier: 2,
   skillBonus: speed2Atk,

@@ -64,7 +64,7 @@ export default function Leveling({
       if (player.ap >= action.cost) {
         let confirmed;
         const replacedAction = player.abilityList.find(ability => ability.type === action.type);
-        if(replacedAction != undefined && (action.type === "MELEE" || action.type === "RANGE" || action.type === "FLEE")){
+        if(replacedAction != undefined && (action.type === "MELEE" || action.type === "RANGED" || action.type === "FLEE")){
           confirmed = window.confirm(`Are you sure you want to buy ${action.name}?\nIt will replace your current ${action.type} ability: ${replacedAction.name}`);
         }
         else {
@@ -119,7 +119,7 @@ export default function Leveling({
         </div>
       </div>
       <div className="flex justify-center mt-4 gap-4 w-full">
-        <Button buttonText="All Set!" className="w-1/3" onClick={doneLeveling} />
+        <Button buttonText="Ready for battle!" className="w-1/3" onClick={doneLeveling} />
       </div>
     </div>
   );

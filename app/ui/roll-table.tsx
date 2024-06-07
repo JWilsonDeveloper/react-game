@@ -117,12 +117,12 @@ export default function RollTable({ turn, triggerFunction, setSelfOverlay, setOt
               <tr className="bg-white">
                 <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
                   <span className={showLabel1 ? '' : 'invisible'}>
-                    Min
+                    Target
                   </span>
                 </td>
                 <td className="border border-gray-200 p-2 md:p-4 text-xs sm:text-sm md:text-base lg:text-lg">
                   <span className={showField1 ? '' : 'invisible'}>
-                    {turn.successRoll.minimum}
+                    {turn.successRoll.target}
                   </span>
                 </td>
               </tr>

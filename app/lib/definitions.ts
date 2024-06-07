@@ -118,7 +118,7 @@ export type Stats = {
 export type Action = {
   id: number;
   name: string;
-  type: 'MELEE' | 'RANGE' | 'SPELL' | 'FLEE' | 'HP Potion' | 'MP Potion' | 'Scroll';
+  type: 'MELEE' | 'RANGED' | 'SPELL' | 'FLEE' | 'HP Potion' | 'MP Potion' | 'Scroll';
   cost: number;
   mpCost: number;
   slot: number;
@@ -185,7 +185,7 @@ export type Turn = {
 }
 
 export type SuccessRoll = {
-  minimum: number;
+  target: number;
   bonus: number;
   roll: number;
   total: number;
