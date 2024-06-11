@@ -181,6 +181,7 @@ const revenue = [
 ];
 
 const equipment = [
+  /*
   {
   name: "Basic Clothes",
   stat: 'ARM',
@@ -253,9 +254,11 @@ const equipment = [
     slot: 1,
     type: 'MAGIC RING'
   },
+  */
 ]
 
 const effectRolls = [];
+/*
 const rangeMin = 1;
 const maxQuantity = 6;
 const maxRangeMax = 12;
@@ -270,8 +273,52 @@ for (let quantity = 1; quantity <= maxQuantity; quantity++) {
     });
   }
 }
+// Add e0d0
+effectRolls.push({rangeMin: 0, rangeMax : 0, quantity : 0});
+*/
 
 const effects = [
+  /*
+  {  
+    // claw
+    effectRollId : "425a02b2-ea3c-4eed-81e5-83852f98bc45",
+    effectBonus : 0,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+  {
+    // shortsword
+    effectRollId : "7b276bc4-4b59-4533-97d9-c2fadc9ead94",
+    effectBonus : 0,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+  {
+    // dagger
+    effectRollId : "1d573457-ef0e-4148-9e7c-a4aa2c653017",
+    effectBonus : 0,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+  {
+    // crush
+    effectRollId : "c3f7438f-c020-4f34-96b6-fc5a664b3c4f",
+    effectBonus : 0,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+  {
+    // petrify
+    effectRollId : "1191c508-b21a-4eb2-8565-c60ca077cf43",
+    effectBonus : 1,
+    target : 'OTHER',
+    stat : 'SPEED',
+    statIncrease : false,
+  },
   {
     // punch and throwRock
     effectRollId : "3f540490-3fb6-4a06-a5f3-135bec30128b",
@@ -289,7 +336,7 @@ const effects = [
     statIncrease : false,
   },
   {
-    // club
+    // club and bite
     effectRollId : "ae1b9a2d-4733-4622-b82e-2387920a4d9d",
     effectBonus : 2,
     target : 'OTHER',
@@ -392,9 +439,11 @@ const effects = [
     stat : 'HP',
     statIncrease : false,
   },
+  */
 ]
 
 const skillBonuses = [
+  /*
   {
     skill: "SPD",
     multiplier: 1,
@@ -435,9 +484,76 @@ const skillBonuses = [
     multiplier: 2,
     type: "EFFECT",
   },
+  */
 ]
 
 const actions = [
+  /*
+  {
+    name: "Bite",
+    type: 'MELEE',
+    slot: 0,
+    tier: 0,
+    skillBonusId: "0e609e45-e3d7-456d-bf7a-68bf90905c0f",
+    successBonus: 0,
+    mpCost: 0,
+    cost: 0,
+    effectId: "4789c706-a0c8-4dc7-a1cd-ade3aac3cd98",
+  },
+  {
+    name: "Claw",
+    type: 'MELEE',
+    slot: 0,
+    tier: 0,
+    skillBonusId: "5e6d29f2-68b4-4e7a-903f-e7c602655849",
+    successBonus: 1,
+    mpCost: 0,
+    cost: 0,
+    effectId: "222920d4-0432-4ecf-a4f4-04ba5cc95735",
+  },
+  {
+    name: "Shortsword",
+    type: 'MELEE',
+    slot: 0,
+    tier: 0,
+    skillBonusId: "c531bfcf-16fb-40f3-8198-c84bdc05d6ad",
+    successBonus: 0,
+    mpCost: 0,
+    cost: 0,
+    effectId: "5fc6cc82-599b-4771-9d23-d567bff857a0",
+  },
+  {
+    name: "Dagger",
+    type: 'MELEE',
+    slot: 0,
+    tier: 0,
+    skillBonusId: "c531bfcf-16fb-40f3-8198-c84bdc05d6ad",
+    successBonus: 0,
+    mpCost: 0,
+    cost: 0,
+    effectId: "b64c7ba6-d4fb-43ca-871f-8bcc8ca51ad2",
+  },
+  {
+    name: "Crush",
+    type: 'MELEE',
+    slot: 0,
+    tier: 0,
+    skillBonusId: "c531bfcf-16fb-40f3-8198-c84bdc05d6ad",
+    successBonus: 0,
+    mpCost: 0,
+    cost: 0,
+    effectId: "4a98d375-6e6a-4b65-b66e-b26b076df5d9",
+  },
+  {
+    name: "Petrify",
+    type: 'MELEE',
+    slot: 0,
+    tier: 0,
+    successBonus: 0,
+    mpCost: 4,
+    cost: 0,
+    effectId: "338e5085-fedb-439f-b1c6-ae90de090268",
+  },
   {
     name: "Punch",
     type: 'MELEE',
@@ -663,8 +779,384 @@ const actions = [
     effectId: "58fd4b4e-92f2-453b-9a37-326870862e86",
     uses : 1,
   },
+  */
 ];
 
+const enemies = [
+  /*
+  {
+    imgSrc: "/images/zombie.png",
+    name: "Zombie",
+    level: 1,
+    xp: 8,
+    gp: 5,
+    currHP: 6,
+    totalHP: 6,
+    currMP: 0,
+    totalMP: 0,
+    str: 1,
+    spd: 0,
+    armor: 0,
+  },
+  {
+    imgSrc: "/images/skeleton.png",
+    name: "Skeleton",
+    level: 1,
+    xp: 10,
+    gp: 6,
+    currHP: 4,
+    totalHP: 4,
+    currMP: 0,
+    totalMP: 0,
+    str: 0,
+    spd: 1,
+    armor: 0,
+  },
+  {
+    imgSrc: "/images/orc.png",
+    name: "Orc",
+    level: 1,
+    xp: 12,
+    gp: 10,
+    currHP: 8,
+    totalHP: 8,
+    currMP: 0,
+    totalMP: 0,
+    str: 1,
+    spd: 1,
+    armor: 1,
+  },
+  {
+    imgSrc: "/images/werewolf.png",
+    name: "Werewolf",
+    level: 2,
+    xp: 24,
+    gp: 8,
+    currHP: 15,
+    totalHP: 15,
+    currMP: 0,
+    totalMP: 0,
+    str: 2,
+    spd: 2,
+    armor: 1,
+  },
+  {
+    imgSrc: "/images/minotaur.png",
+    name: "Minotaur",
+    level: 2,
+    xp: 26,
+    gp: 18,
+    currHP: 18,
+    totalHP: 18,
+    currMP: 6,
+    totalMP: 6,
+    str: 2,
+    spd: 1,
+    armor: 3,
+  },
+  {
+    imgSrc: "/images/vampire.png",
+    name: "Vampire",
+    level: 2,
+    xp: 20,
+    gp: 12,
+    currHP: 14,
+    totalHP: 14,
+    currMP: 0,
+    totalMP: 0,
+    str: 1,
+    spd: 2,
+    armor: 0,
+  },
+  {
+    imgSrc: "/images/ninja.png",
+    name: "Ninja",
+    level: 2,
+    xp: 22,
+    gp: 14,
+    currHP: 10,
+    totalHP: 10,
+    currMP: 6,
+    totalMP: 6,
+    str: 0,
+    spd: 3,
+    armor: 1,
+  },
+  {
+    imgSrc: "/images/basilisk.png",
+    name: "Basilisk",
+    level: 3,
+    xp: 42,
+    gp: 18,
+    currHP: 23,
+    totalHP: 23,
+    currMP: 0,
+    totalMP: 0,
+    str: 2,
+    spd: 3,
+    armor: 2,
+  },
+  {
+    imgSrc: "/images/ice-monster.png",
+    name: "Ice Monster",
+    level: 3,
+    xp: 44,
+    gp: 16,
+    currHP: 25,
+    totalHP: 25,
+    currMP: 0,
+    totalMP: 0,
+    str: 3,
+    spd: 2,
+    armor: 1,
+  },
+  {
+    imgSrc: "/images/mummy.png",
+    name: "Mummy",
+    level: 3,
+    xp: 38,
+    gp: 28,
+    currHP: 35,
+    totalHP: 35,
+    currMP: 9,
+    totalMP: 9,
+    str: 2,
+    spd: 1,
+    armor: 1,
+  },
+  {
+    imgSrc: "/images/nightmare.png",
+    name: "Nightmare",
+    level: 3,
+    xp: 40,
+    gp: 20,
+    currHP: 18,
+    totalHP: 18,
+    currMP: 6,
+    totalMP: 6,
+    str: 3,
+    spd: 3,
+    armor: 3,
+  },
+  {
+    imgSrc: "/images/great-ogre.png",
+    name: "Great Ogre",
+    level: 4,
+    xp: 56,
+    gp: 26,
+    currHP: 45,
+    totalHP: 45,
+    currMP: 0,
+    totalMP: 0,
+    str: 5,
+    spd: 2,
+    armor: 2,
+  },
+  {
+    imgSrc: "/images/dragon.png",
+    name: "Dragon",
+    level: 4,
+    xp: 54,
+    gp: 34,
+    currHP: 38,
+    totalHP: 38,
+    currMP: 12,
+    totalMP: 12,
+    str: 4,
+    spd: 3,
+    armor: 2,
+  },
+  {
+    imgSrc: "/images/death-knight.png",
+    name: "Death Knight",
+    level: 4,
+    xp: 48,
+    gp: 30,
+    currHP: 30,
+    totalHP: 30,
+    currMP: 6,
+    totalMP: 6,
+    str: 3,
+    spd: 2,
+    armor: 4,
+  },
+  {
+    imgSrc: "/images/arch-wizard.png",
+    name: "Arch Wizard",
+    level: 4,
+    xp: 50,
+    gp: 32,
+    currHP: 22,
+    totalHP: 22,
+    currMP: 24,
+    totalMP: 24,
+    str: 2,
+    spd: 2,
+    armor: 0,
+  },
+  {
+    imgSrc: "/images/frog.png",
+    name: "Frog",
+    level: 5,
+    xp: 80,
+    gp: 0,
+    currHP: 4,
+    totalHP: 4,
+    currMP: 0,
+    totalMP: 0,
+    str: 1,
+    spd: 10,
+    armor: 15,
+  },
+  */
+]
+
+const abilityListsActions = [
+  { // Zombie Punch
+    abilityListId : "4eb296b1-42dc-46c8-bca9-f83cfc3e1d10",
+    actionId : "58089a62-dcdc-4cb2-929d-1a18e5430cd4",
+  }, 
+  { // Zombie Bite
+    abilityListId : "4eb296b1-42dc-46c8-bca9-f83cfc3e1d10",
+    actionId : "c6d41962-140c-455e-88ed-81fbd879a3de",
+  }, 
+  { // Skeleton Claw
+    abilityListId : "1d2cf8bc-0782-4b77-a4fd-bf4801ad115f",
+    actionId : "75261b4e-5c5a-4e50-a4a9-1c0219c1d79d",
+  }, 
+  { // Skeleton Bite
+    abilityListId : "1d2cf8bc-0782-4b77-a4fd-bf4801ad115f",
+    actionId : "c6d41962-140c-455e-88ed-81fbd879a3de",
+  }, 
+  { // Orc Punch
+    abilityListId : "a9736598-e573-41d1-99c0-c4a88e84c9f7",
+    actionId : "58089a62-dcdc-4cb2-929d-1a18e5430cd4",
+  }, 
+  { // Orc Club
+    abilityListId : "a9736598-e573-41d1-99c0-c4a88e84c9f7",
+    actionId : "4f704512-2b71-47eb-ba26-52d4e4a0b28e",
+  }, 
+  { // Werewolf Claw
+    abilityListId : "cd50ccef-4909-49ee-9113-de7d0ae95430",
+    actionId : "75261b4e-5c5a-4e50-a4a9-1c0219c1d79d",
+  }, 
+  { // Werewolf Bite
+    abilityListId : "cd50ccef-4909-49ee-9113-de7d0ae95430",
+    actionId : "c6d41962-140c-455e-88ed-81fbd879a3de",
+  }, 
+  { // Minotaur Shortsword
+    abilityListId : "c075872f-7222-4f17-912f-69ca4cdb3455",
+    actionId : "c28b58d0-1e59-4a3f-a3af-72451192ab4c",
+  }, 
+  { // Minotaur Bite
+    abilityListId : "c075872f-7222-4f17-912f-69ca4cdb3455",
+    actionId : "c6d41962-140c-455e-88ed-81fbd879a3de",
+  },
+  { // Vampire Dagger
+    abilityListId : "1a9ab756-6a9e-4b59-a6e5-f0971209437c",
+    actionId : "6d98905e-18eb-42bd-a4b2-142ecb72197b",
+  }, 
+  { // Vampire Bite
+    abilityListId : "1a9ab756-6a9e-4b59-a6e5-f0971209437c",
+    actionId : "c6d41962-140c-455e-88ed-81fbd879a3de",
+  }, 
+  { // Ninja Punch
+    abilityListId : "fadd897f-d729-44d3-a099-1da3f4ecca39",
+    actionId : "58089a62-dcdc-4cb2-929d-1a18e5430cd4",
+  }, 
+  { // Ninja Dagger
+    abilityListId : "fadd897f-d729-44d3-a099-1da3f4ecca39",
+    actionId : "6d98905e-18eb-42bd-a4b2-142ecb72197b",
+  }, 
+  { // Basilisk Crush
+    abilityListId : "c5e20abc-62a6-491c-8c41-a2e486e8bbce",
+    actionId : "c8ae7764-dc02-46fa-9e0f-019b3bec3d55",
+  }, 
+  { // Basilisk Bite
+    abilityListId : "c5e20abc-62a6-491c-8c41-a2e486e8bbce",
+    actionId : "c6d41962-140c-455e-88ed-81fbd879a3de",
+  }, 
+  { // Ice Monster Crush
+    abilityListId : "3f547527-57d3-47f6-8952-643c7aa1aa2e",
+    actionId : "c8ae7764-dc02-46fa-9e0f-019b3bec3d55",
+  }, 
+  { // Ice Monster Claw
+    abilityListId : "3f547527-57d3-47f6-8952-643c7aa1aa2e",
+    actionId : "75261b4e-5c5a-4e50-a4a9-1c0219c1d79d",
+  }, 
+  { // Mummy Dagger
+    abilityListId : "a76b7b92-2aa6-442f-b372-cd509b2ef893",
+    actionId : "6d98905e-18eb-42bd-a4b2-142ecb72197b",
+  }, 
+  { // Mummy Petrify
+    abilityListId : "a76b7b92-2aa6-442f-b372-cd509b2ef893",
+    actionId : "870c2583-68c2-4f6d-aac2-cee910624a56",
+  }, 
+  { // Nightmare Claw
+    abilityListId : "dfc3d96d-6bf0-4e0b-94f1-cc36d8641374",
+    actionId : "75261b4e-5c5a-4e50-a4a9-1c0219c1d79d",
+  }, 
+  { // Nightmare Bite
+    abilityListId : "dfc3d96d-6bf0-4e0b-94f1-cc36d8641374",
+    actionId : "c6d41962-140c-455e-88ed-81fbd879a3de",
+  }, 
+  { // Great Ogre Club
+    abilityListId : "08810d46-7c2c-4ba0-92ed-2ea1df0f9e19",
+    actionId : "4f704512-2b71-47eb-ba26-52d4e4a0b28e",
+  }, 
+  { // Great Ogre Crush
+    abilityListId : "08810d46-7c2c-4ba0-92ed-2ea1df0f9e19",
+    actionId : "c8ae7764-dc02-46fa-9e0f-019b3bec3d55",
+  }, 
+  { // Dragon Poison Cloud
+    abilityListId : "a507e521-24c7-4ff2-bd5c-b3ebc09d1eae",
+    actionId : "eb56b726-073d-4079-a03c-248bf3161adc",
+  }, 
+  { // Dragon Bite
+    abilityListId : "a507e521-24c7-4ff2-bd5c-b3ebc09d1eae",
+    actionId : "c6d41962-140c-455e-88ed-81fbd879a3de",
+  }, 
+  { // Dragon Claw
+    abilityListId : "a507e521-24c7-4ff2-bd5c-b3ebc09d1eae",
+    actionId : "75261b4e-5c5a-4e50-a4a9-1c0219c1d79d",
+  }, 
+  { // Death Knight Longsword
+    abilityListId : "40490850-93a9-473b-9941-7089f1ad648a",
+    actionId : "24b29786-611e-41d8-8caf-7e1e5637d978",
+  }, 
+  { // Death Knight Crossbow
+    abilityListId : "40490850-93a9-473b-9941-7089f1ad648a",
+    actionId : "02468621-5892-40c7-985d-c30e34bc6b18",
+  }, 
+  { // Arch Wizard Fireball
+    abilityListId : "e4e7ad30-eace-46fb-9753-1f9084fb71ff",
+    actionId : "bb62d415-4566-4e10-a3e7-46b23ab6ec95",
+  }, 
+  { // Arch Wizard Poison Cloud
+    abilityListId : "e4e7ad30-eace-46fb-9753-1f9084fb71ff",
+    actionId : "eb56b726-073d-4079-a03c-248bf3161adc",
+  }, 
+  { // Arch Wizard Magic Blast
+    abilityListId : "e4e7ad30-eace-46fb-9753-1f9084fb71ff",
+    actionId : "d6d592b7-f097-4482-a417-98003cc36115",
+  }, 
+  { // Arch Wizard Dagger
+    abilityListId : "e4e7ad30-eace-46fb-9753-1f9084fb71ff",
+    actionId : "6d98905e-18eb-42bd-a4b2-142ecb72197b",
+  }, 
+  { // Arch Wizard Petrify
+    abilityListId : "e4e7ad30-eace-46fb-9753-1f9084fb71ff",
+    actionId : "870c2583-68c2-4f6d-aac2-cee910624a56",
+  }, 
+  { // Frog Ultra Fireball Scroll
+    abilityListId : "66a79200-047a-416b-91e3-915e36e16347",
+    actionId : "d8fee3cd-c68b-4555-8df5-6d8f608fa825",
+  }, 
+  { // Frog Bite
+    abilityListId : "66a79200-047a-416b-91e3-915e36e16347",
+    actionId : "c6d41962-140c-455e-88ed-81fbd879a3de",
+  }, 
+]
 
 module.exports = {
   users,
@@ -676,4 +1168,6 @@ module.exports = {
   effects,
   skillBonuses,
   actions,
+  enemies,
+  abilityListsActions,
 };

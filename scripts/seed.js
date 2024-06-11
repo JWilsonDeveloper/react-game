@@ -9,6 +9,8 @@ const {
   effects,
   skillBonuses,
   actions,
+  enemies,
+  abilityListsActions,
 } = require('../app/lib/placeholder-data.js');
 const bcrypt = require('bcrypt');
 
@@ -255,6 +257,107 @@ async function seedActions(client) {
   }
 }
 
+async function seedEnemies(client) {
+  try {
+    // Ensure the uuid-ossp extension is available
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "enemies" table if it doesn't exist
+    await client.sql`
+      CREATE TABLE IF NOT EXISTS enemies (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        img_src VARCHAR(255) NOT NULL,
+        name VARCHAR(50) NOT NULL,
+        level INTEGER NOT NULL,
+        xp INTEGER NOT NULL,
+        gp INTEGER NOT NULL,
+        curr_hp INTEGER NOT NULL,
+        total_hp INTEGER NOT NULL,
+        curr_mp INTEGER NOT NULL,
+        total_mp INTEGER NOT NULL,
+        str INTEGER NOT NULL,
+        spd INTEGER NOT NULL,
+        armor INTEGER NOT NULL,
+        ability_list_id UUID DEFAULT uuid_generate_v4() NOT NULL
+      );
+    `;
+
+    console.log(`Created "enemies" table`);
+
+    // Insert data into the "enemies" table
+    const insertedEnemies = await Promise.all(
+      enemies.map(
+        (enemy) => client.sql`
+          INSERT INTO enemies (
+            img_src, name, level, xp, gp, curr_hp, total_hp, curr_mp, total_mp, str, spd, armor
+          )
+          VALUES (
+            ${enemy.imgSrc},
+            ${enemy.name},
+            ${enemy.level},
+            ${enemy.xp},
+            ${enemy.gp},
+            ${enemy.currHP},
+            ${enemy.totalHP},
+            ${enemy.currMP},
+            ${enemy.totalMP},
+            ${enemy.str},
+            ${enemy.spd},
+            ${enemy.armor}
+          )
+          ON CONFLICT (id) DO NOTHING;
+        `
+      )
+    );
+
+    console.log(`Seeded ${insertedEnemies.length} enemies`);
+
+    return {
+      insertedEnemies,
+    };
+  } catch (error) {
+    console.error('Error seeding enemies:', error);
+    throw error;
+  }
+}
+
+async function seedAbilityListsActions(client) {
+  try {
+    // Ensure the uuid-ossp extension is available
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "ability_lists_actions" table if it doesn't exist
+    await client.sql`
+      CREATE TABLE IF NOT EXISTS ability_lists_actions (
+        ability_list_id UUID NOT NULL,
+        action_id UUID NOT NULL,
+        PRIMARY KEY (ability_list_id, action_id)
+      );
+    `;
+
+    console.log(`Created "ability_lists_actions" table`);
+
+    // Insert data into the "ability_lists_actions" table
+    const insertedAbilityListsActions = await Promise.all(
+      abilityListsActions.map(
+        (entry) => client.sql`
+          INSERT INTO ability_lists_actions (ability_list_id, action_id)
+          VALUES (${entry.abilityListId}, ${entry.actionId})
+          ON CONFLICT (ability_list_id, action_id) DO NOTHING;
+        `
+      )
+    );
+
+    console.log(`Seeded ${insertedAbilityListsActions.length} ability list actions`);
+
+    return {
+      insertedAbilityListsActions,
+    };
+  } catch (error) {
+    console.error('Error seeding ability list actions:', error);
+    throw error;
+  }
+}
 
 
 async function seedUsers(client) {
@@ -422,6 +525,8 @@ async function main() {
   //await seedSkillBonuses(client);
   //await seedEffects(client);
   //await seedActions(client);
+  //await seedEnemies(client);
+  //await seedAbilityListsActions(client);
 
   await client.end();
 }

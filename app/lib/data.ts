@@ -12,6 +12,7 @@ import {
   Effect,
   Action,
   SkillBonus,
+  Entity,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -240,7 +241,151 @@ export async function getActions() {
   }
 }
 
+export async function getAction(actionId : number) {
+  try {
+    let data = await sql`
+      SELECT 
+        id, 
+        name, 
+        type, 
+        cost, 
+        mp_cost AS mpCost, 
+        slot, 
+        tier, 
+        success_bonus AS successBonus, 
+        skill_bonus_id AS skillBonusId, 
+        effect_id AS effectId, 
+        uses 
+      FROM actions
+      WHERE id = ${actionId};
+    `;
 
+    if (data.rows.length === 0) {
+      throw new Error(`Action with ID ${actionId} not found.`);
+    }
+
+    const row = data.rows[0];
+    const skillBonus = row.skillBonusId ? await getSkillBonus(row.skillBonusId) : null;
+    const effect = row.effectId ? await getEffect(row.effectId) : null;
+    const action : Action = {
+      id: row.id,
+      name: row.name,
+      type: row.type,
+      cost: row.cost,
+      mpCost: row.mpCost,
+      slot: row.slot,
+      tier: row.tier,
+      successBonus: row.successBonus,
+      skillBonus: skillBonus || undefined,
+      effect: effect || undefined,
+      uses: row.uses
+    };
+
+    return action;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error(`Failed to fetch the action with ID ${actionId}.`);
+  }
+}
+
+export async function getActionsByAbilityListId(abilityListId: number) {
+  try {
+    let data = await sql`
+      SELECT 
+        action_id
+      FROM ability_lists_actions
+      WHERE ability_list_id = ${abilityListId};
+    `;
+
+    const actionIds = data.rows.map(row => row.action_id);
+
+    // Fetch details of each action
+    const actions = await Promise.all(actionIds.map(async actionId => {
+      try {
+        return await getAction(actionId);
+      } catch (error) {
+        console.error(`Failed to fetch action with ID ${actionId}:`, error);
+        return null;
+      }
+    }));
+ 
+    // Filter out any failed action fetches and remove null values
+    const validActions: Action[] = actions.filter((action): action is Action => action !== null);
+
+    return validActions;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch actions by ability list ID.');
+  }
+}
+
+export async function getEnemies() {
+  try {
+    const data = await sql`
+      SELECT * FROM enemies;
+    `;
+
+    // Initialize an empty array to store enemies
+    const enemiesArray : Entity[] = [];
+
+    // Loop through each enemy data
+    for (const enemy of data.rows) {
+      try {
+        // Fetch the actions associated with the enemy's ability list
+        const abilityList = await getActionsByAbilityListId(enemy.ability_list_id);
+
+        // Create the enemy object with abilities
+        const enemyWithAbilities : Entity = {
+          id: enemy.id,
+          imgSrc: enemy.img_src,
+          name: enemy.name,
+          level: enemy.level,
+          xp: enemy.xp,
+          gp: enemy.gp,
+          currHP: enemy.curr_hp,
+          totalHP: enemy.total_hp,
+          currMP: enemy.curr_mp,
+          totalMP: enemy.total_mp,
+          str: enemy.str,
+          spd: enemy.spd,
+          armor: enemy.armor,
+          abilityList,
+        };
+
+      // Push the enemy object to the array
+      enemiesArray.push(enemyWithAbilities);
+
+      } catch (error) {
+        console.error(`Failed to fetch abilities for enemy with ID ${enemy.id}:`, error);
+        // Create the enemy object without abilities if fetching fails
+        const enemyWithoutAbilities : Entity = {
+          id: enemy.id,
+          imgSrc: enemy.img_src,
+          name: enemy.name,
+          level: enemy.level,
+          xp: enemy.xp,
+          gp: enemy.gp,
+          currHP: enemy.curr_hp,
+          totalHP: enemy.total_hp,
+          currMP: enemy.curr_mp,
+          totalMP: enemy.total_mp,
+          str: enemy.str,
+          spd: enemy.spd,
+          armor: enemy.armor,
+          abilityList: []
+        };
+
+        // Push the enemy object without abilities to the array
+        enemiesArray.push(enemyWithoutAbilities);
+      }
+    }
+
+    return enemiesArray;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch enemies with abilities.');
+  }
+}
 
 
 export async function fetchRevenue() {
