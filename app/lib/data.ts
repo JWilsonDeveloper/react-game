@@ -8,10 +8,14 @@ import {
   User,
   Revenue,
   Equipment,
+  EffectRoll,
+  Effect,
+  Action,
+  SkillBonus,
 } from './definitions';
 import { formatCurrency } from './utils';
 
-export async function getAllEquipment() {
+export async function getEquipment() {
   try {
     const data = await sql<Equipment>`
       SELECT id, name, stat, effect, tier, cost, slot, type FROM equipment;
@@ -32,9 +36,212 @@ export async function getAllEquipment() {
     return equipmentArray;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch the latest invoices.');
+    throw new Error('Failed to fetch the equipment.');
   }
 }
+
+export async function getEffectRolls() {
+  try {
+    let data = await sql`
+      SELECT id, range_min, range_max, quantity FROM effect_rolls;
+    `;
+
+    // Transform the result into an array of EffectRoll objects
+    const effectRollsArray: EffectRoll[] = data.rows.map(row => ({
+      id: row.id,
+      rangeMin: row.range_min,
+      rangeMax: row.range_max,
+      quantity: row.quantity
+    }));
+
+    return effectRollsArray;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch the effectRolls.');
+  }
+}
+
+export async function getEffectRoll(id: number) {
+  try {
+    let data = await sql`
+      SELECT id, range_min, range_max, quantity 
+      FROM effect_rolls 
+      WHERE id = ${id};
+    `;
+
+    if (data.rows.length === 0) {
+      throw new Error(`Effect roll with id ${id} not found`);
+    }
+
+    const row = data.rows[0];
+    const effectRoll : EffectRoll = {
+      id: row.id,
+      rangeMin: row.range_min,
+      rangeMax: row.range_max,
+      quantity: row.quantity
+    };
+    return effectRoll;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch the effect roll.');
+  }
+}
+
+export async function getEffects() {
+  try {
+    let data = await sql`
+      SELECT id, effect_roll_id, effect_bonus, target, stat, stat_increase 
+      FROM effects;
+    `;
+
+    // Transform the result into an array of Effect objects
+    const effectsArray : Effect[] = await Promise.all(data.rows.map(async row => {
+      const effectRoll : EffectRoll = await getEffectRoll(row.effect_roll_id);
+
+      return {
+        id: row.id,
+        effectRoll,
+        effectBonus: row.effect_bonus,
+        target: row.target,
+        stat: row.stat,
+        statIncrease: row.stat_increase
+      };
+    }));
+
+    return effectsArray;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch the effects.');
+  }
+}
+
+export async function getEffect(id: number) {
+  try {
+    let data = await sql`
+      SELECT id, effect_roll_id, effect_bonus, target, stat, stat_increase 
+      FROM effects
+      WHERE id = ${id};
+    `;
+
+    if (data.rows.length === 0) {
+      throw new Error(`Effect with id ${id} not found`);
+    }
+
+    const row = data.rows[0];
+    const effectRoll : EffectRoll = await getEffectRoll(row.effect_roll_id);
+
+    const effect = {
+      id: row.id,
+      effectRoll,
+      effectBonus: row.effect_bonus,
+      target: row.target,
+      stat: row.stat,
+      statIncrease: row.stat_increase
+    };
+
+    return effect;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch the effect.');
+  }
+}
+
+
+export async function getSkillBonuses() {
+  try {
+    let data = await sql`
+      SELECT id, skill, multiplier, type FROM skill_bonuses;
+    `;
+
+    // Transform the result into an array of SkillBonus objects
+    const skillBonusesArray: SkillBonus[] = data.rows.map(row => ({
+      id: row.id,
+      skill: row.skill,
+      multiplier: row.multiplier,
+      type: row.type
+    }));
+
+    return skillBonusesArray;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch the skill bonuses.');
+  }
+}
+
+export async function getSkillBonus(id: number) {
+  try {
+    let data = await sql`
+      SELECT id, skill, multiplier, type 
+      FROM skill_bonuses
+      WHERE id = ${id};
+    `;
+
+    if (data.rows.length === 0) {
+      throw new Error(`Skill bonus with id ${id} not found`);
+    }
+
+    const row = data.rows[0];
+    const skillBonus : SkillBonus = {
+      id: row.id,
+      skill: row.skill,
+      multiplier: row.multiplier,
+      type: row.type
+    };
+
+    return skillBonus;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch the skill bonus.');
+  }
+}
+
+export async function getActions() {
+  try {
+    let data = await sql`
+      SELECT 
+        id, 
+        name, 
+        type, 
+        cost, 
+        mp_cost, 
+        slot, 
+        tier, 
+        success_bonus, 
+        skill_bonus_id, 
+        effect_id, 
+        uses 
+      FROM actions;
+    `;
+
+    // Transform the result into an array of Action objects
+    const actionsArray = await Promise.all(data.rows.map(async row => {
+      const skillBonus = row.skill_bonus_id ? await getSkillBonus(row.skill_bonus_id) : null;
+      const effect = row.effect_id ? await getEffect(row.effect_id) : null;
+      const action : Action = {
+        id: row.id,
+        name: row.name,
+        type: row.type,
+        cost: row.cost,
+        mpCost: row.mp_cost,
+        slot: row.slot,
+        tier: row.tier,
+        successBonus: row.success_bonus,
+        skillBonus: skillBonus || undefined,
+        effect: effect || undefined,
+        uses: row.uses
+      };
+      return action;
+    }));
+
+    return actionsArray;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch the actions.');
+  }
+}
+
+
+
 
 export async function fetchRevenue() {
   // Add noStore() here to prevent the response from being cached.

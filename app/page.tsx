@@ -1,4 +1,5 @@
-'use client'
+//'use client'
+//require('dotenv').config();
 
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
@@ -6,10 +7,17 @@ import { Player, Action, EffectRoll, Entity, SkillBonus, Equipment } from './lib
 import Adventure from '@/app/ui/adventure';
 import MyGame from './ui/my-game';
 import hero from '@/app/images/hero.png';
-import { getAllEquipment } from '@/app/lib/data';
+import { getEquipment, getEffectRolls, getEffects, getSkillBonuses, getActions } from '@/app/lib/data';
 
 export default async function Page() {
-  const equipment = await getAllEquipment();
+  const equipment = await getEquipment();
+  //const effectRolls = await getEffectRolls();
+  //const effects = await getEffects();
+  //const skillBonuses = await getSkillBonuses();
+  const actions = await getActions();
+  const items = actions.filter(action => action.type === "HP Potion" || action.type === "MP Potion" || action.type === "Scroll");
+  const abilities = actions.filter(action => action.type === "MELEE" || action.type === "RANGED" || action.type ===  "SPELL" || action.type === "FLEE");
+
   const e1d4: EffectRoll = {
     id: 0,
     rangeMin: 1,
@@ -130,31 +138,157 @@ export default async function Page() {
     rangeMax: 12,
     quantity: 4,
   }
+  const e0d0: EffectRoll = {
+    id: 20,
+    rangeMin: 0,
+    rangeMax: 0,
+    quantity: 0,
+  }
 
-const speed1Flee: SkillBonus = {
+const spd1Success: SkillBonus = {
   id: 0,
   skill: "SPD",
   multiplier: 1,
   type: "SUCCESS",
 }
-const speed2Flee: SkillBonus = {
-  id: 0,
-  skill: "SPD",
-  multiplier: 2,
-  type: "SUCCESS",
-}
-const speed2Atk: SkillBonus = {
+const spd2Success: SkillBonus = {
   id: 1,
   skill: "SPD",
   multiplier: 2,
   type: "SUCCESS",
 }
-const strength2Dmg: SkillBonus = {
+const str2Effect: SkillBonus = {
   id: 2,
   skill: "STR",
   multiplier: 2,
   type: "EFFECT",
 }
+const str2Success: SkillBonus = {
+  id: 2,
+  skill: "STR",
+  multiplier: 2,
+  type: "SUCCESS",
+}
+const spd2Effect: SkillBonus = {
+  id: 1,
+  skill: "SPD",
+  multiplier: 2,
+  type: "SUCCESS",
+}
+
+const bite : Action = {
+  id: 0,
+  name: "Bite",
+  type: 'MELEE',
+  slot: 0,
+  tier: 0,
+  skillBonus: spd2Effect,
+  successBonus: 0,
+  mpCost: 0,
+  cost: 0,
+  effect: {
+    effectRoll: e1d6,
+    effectBonus: 2,
+    target: 'OTHER',
+    stat: 'HP',
+    statIncrease: false,
+  },
+}
+
+const claw : Action = {
+  id: 1,
+  name: "Claw",
+  type: 'MELEE',
+  slot: 0,
+  tier: 0,
+  skillBonus: str2Effect,
+  successBonus: 1,
+  mpCost: 0,
+  cost: 0,
+  effect: {
+    effectRoll: e1d8,
+    effectBonus: 0,
+    target: 'OTHER',
+    stat: 'HP',
+    statIncrease: false,
+  },
+}
+
+const shortsword : Action = {
+  id: 2,
+  name: "Shortsword",
+  type: 'MELEE',
+  slot: 0,
+  tier: 0,
+  skillBonus: spd2Success,
+  successBonus: 0,
+  mpCost: 0,
+  cost: 0,
+  effect: {
+    effectRoll: e1d10,
+    effectBonus: 0,
+    target: 'OTHER',
+    stat: 'HP',
+    statIncrease: false,
+  },
+}
+
+const dagger : Action = {
+  id: 3,
+  name: "Dagger",
+  type: 'MELEE',
+  slot: 0,
+  tier: 0,
+  skillBonus: spd2Success,
+  successBonus: 0,
+  mpCost: 0,
+  cost: 0,
+  effect: {
+    effectRoll: e2d4,
+    effectBonus: 0,
+    target: 'OTHER',
+    stat: 'HP',
+    statIncrease: false,
+  },
+}
+
+const crush : Action = {
+  id: 4,
+  name: "Crush",
+  type: 'MELEE',
+  slot: 0,
+  tier: 0,
+  skillBonus: spd2Success,
+  successBonus: 0,
+  mpCost: 0,
+  cost: 0,
+  effect: {
+    effectRoll: e2d6,
+    effectBonus: 0,
+    target: 'OTHER',
+    stat: 'HP',
+    statIncrease: false,
+  },
+}
+
+const petrify : Action = {
+  id: 4,
+  name: "Petrify",
+  type: 'RANGED',
+  slot: 0,
+  tier: 0,
+  successBonus: 0,
+  mpCost: 4,
+  cost: 0,
+  effect: {
+    effectRoll: e0d0,
+    effectBonus: 1,
+    target: 'OTHER',
+    stat: 'SPEED',
+    statIncrease: false,
+  },
+}
+
 
 
 const punch : Action = {
@@ -163,7 +297,7 @@ const punch : Action = {
   type: 'MELEE',
   slot: 0,
   tier: 0,
-  skillBonus: speed2Atk,
+  skillBonus: spd2Success,
   successBonus: 1,
   mpCost: 0,
   cost: 0,
@@ -181,7 +315,7 @@ const throwRock : Action = {
   type: 'RANGED',
   slot: 1,
   tier: 0,
-  skillBonus: strength2Dmg,
+  skillBonus: str2Effect,
   successBonus: 1,
   mpCost: 0,
   cost: 0,
@@ -210,13 +344,13 @@ const magicBlast : Action = {
     statIncrease: false,
   },
 }
-const Club : Action = {
+const club : Action = {
   id: 3,
   name: "Club",
   type: 'MELEE',
   slot: 0,
   tier: 1,
-  skillBonus: strength2Dmg,
+  skillBonus: str2Effect,
   successBonus: 2,
   mpCost: 0,
   cost: 1,
@@ -234,7 +368,7 @@ const slingshot : Action = {
   type: 'RANGED',
   slot: 1,
   tier: 1,
-  skillBonus: speed2Atk,
+  skillBonus: spd2Success,
   successBonus: 2,
   mpCost: 0,
   cost: 1,
@@ -269,7 +403,7 @@ const longsword : Action = {
   type: 'MELEE',
   slot: 0,
   tier: 2,
-  skillBonus: strength2Dmg,
+  skillBonus: str2Effect,
   successBonus: 3,
   mpCost: 0,
   cost: 3,
@@ -287,7 +421,7 @@ const crossbow : Action = {
   type: 'RANGED',
   slot: 1,
   tier: 2,
-  skillBonus: speed2Atk,
+  skillBonus: spd2Success,
   successBonus: 1,
   mpCost: 0,
   cost: 3,
@@ -322,7 +456,7 @@ const runAway : Action = {
   type: 'FLEE',
   slot: 3,
   tier: 0,
-  skillBonus: speed1Flee,
+  skillBonus: spd1Success,
   successBonus: 1,
   cost: 0,
   mpCost: 0,
@@ -333,7 +467,7 @@ const stealthyEscape : Action = {
   type: 'FLEE',
   slot: 3,
   tier: 1,
-  skillBonus: speed2Flee,
+  skillBonus: spd2Success,
   successBonus: 2,
   cost: 1,
   mpCost: 0,
@@ -344,16 +478,37 @@ const escapeOnSteed  : Action = {
   type: 'FLEE',
   slot: 3,
   tier: 2,
-  skillBonus: speed2Flee,
+  skillBonus: spd2Success,
   successBonus: 4,
   cost: 2,
   mpCost: 0,
 }
+
+const ultraFireballScroll : Action =
+{
+  id: 13,
+  name: "Ultra Fireball Scroll",
+  slot: 5,
+  tier: 2,
+  successBonus: 8,
+  mpCost: 0,
+  cost: 35,
+  type: 'Scroll',
+  effect:{
+    effectRoll: e4d6,
+    effectBonus: 12,
+    target: 'OTHER',
+    stat: 'MP',
+    statIncrease: true,
+  },
+  uses : 1,
+}
+/*
 const abilities : Action[] = [
   punch,
   throwRock,
   magicBlast,
-  Club,
+  club,
   slingshot,
   poisonCloud,
   longsword,
@@ -511,7 +666,7 @@ const items : Action[] = [
   },
   {
     id: 8,
-    name: "Fireball3 Scroll",
+    name: "Ultra Fireball Scroll",
     slot: 5,
     tier: 2,
     successBonus: 8,
@@ -613,12 +768,14 @@ const equipment : Equipment[] = [
 ]
 */
 
-const actionList0 : Action[] = [punch, throwRock, magicBlast, runAway];
-const actionList1 : Action[] = [abilities[0], abilities[1]];
+const actionList0 : Action[] = [actions[0], actions[1], actions[2], actions[9]];
+//const actionList1 : Action[] = [actions[0], actions[1]];
+//const actionList1 : Action[] = [petrify];
 
 const itemList0 : Action[] = [{...items[0]}];
 
 const equipList0 : Equipment[] = [equipment[0], equipment[1]];
+
 
 let basePlayer: Player = {
     id: 0,
@@ -644,7 +801,7 @@ let basePlayer: Player = {
     imgSrc: "/images/zombie.png",
     name: "Zombie",
     level: 1,
-    xp: 10,
+    xp: 8,
     gp: 5,
     currHP: 6,
     totalHP: 6,
@@ -653,7 +810,7 @@ let basePlayer: Player = {
     str: 1,
     spd: 0,
     armor: 0,
-    abilityList: actionList1,
+    abilityList: [punch, bite],
 }
 
 const skeleton: Entity = {
@@ -661,7 +818,7 @@ const skeleton: Entity = {
     imgSrc: "/images/skeleton.png",
     name: "Skeleton",
     level: 1,
-    xp: 8,
+    xp: 10,
     gp: 6,
     currHP: 4,
     totalHP: 4,
@@ -670,7 +827,7 @@ const skeleton: Entity = {
     str: 0,
     spd: 1,
     armor: 0,
-    abilityList: actionList1,
+    abilityList: [claw, bite],
 }
 
 const orc: Entity = {
@@ -687,7 +844,7 @@ const orc: Entity = {
     str: 1,
     spd: 1,
     armor: 1,
-    abilityList: actionList1,
+    abilityList: [punch, club],
 }
 
 const werewolf: Entity = {
@@ -704,7 +861,7 @@ const werewolf: Entity = {
     str: 2,
     spd: 2,
     armor: 1,
-    abilityList: actionList1,
+    abilityList: [claw, bite],
 }
 
 const minotaur: Entity = {
@@ -721,7 +878,7 @@ const minotaur: Entity = {
     str: 2,
     spd: 1,
     armor: 3,
-    abilityList: actionList1,
+    abilityList: [shortsword, bite],
 }
 
 const vampire: Entity = {
@@ -738,7 +895,7 @@ const vampire: Entity = {
     str: 1,
     spd: 2,
     armor: 0,
-    abilityList: actionList1,
+    abilityList: [dagger, bite],
 }
 
 const ninja: Entity = {
@@ -755,7 +912,7 @@ const ninja: Entity = {
     str: 0,
     spd: 3,
     armor: 1,
-    abilityList: actionList1,
+    abilityList: [punch, dagger],
 }
 
 const basilisk: Entity = {
@@ -772,7 +929,7 @@ const basilisk: Entity = {
     str: 2,
     spd: 3,
     armor: 2,
-    abilityList: actionList1,
+    abilityList: [crush, bite],
 }
 
 const iceMonster: Entity = {
@@ -789,7 +946,7 @@ const iceMonster: Entity = {
     str: 3,
     spd: 2,
     armor: 1,
-    abilityList: actionList1,
+    abilityList: [crush, claw],
 }
 
 const mummy: Entity = {
@@ -806,7 +963,7 @@ const mummy: Entity = {
     str: 2,
     spd: 1,
     armor: 1,
-    abilityList: actionList1,
+    abilityList: [petrify, dagger],
 }
 
 const nightmare: Entity = {
@@ -823,7 +980,7 @@ const nightmare: Entity = {
     str: 3,
     spd: 3,
     armor: 3,
-    abilityList: actionList1,
+    abilityList: [claw, bite],
 }
 
 const greatOgre: Entity = {
@@ -840,7 +997,7 @@ const greatOgre: Entity = {
     str: 5,
     spd: 2,
     armor: 2,
-    abilityList: actionList1,
+    abilityList: [club, crush],
 }
 
 const dragon: Entity = {
@@ -857,7 +1014,7 @@ const dragon: Entity = {
     str: 4,
     spd: 3,
     armor: 2,
-    abilityList: actionList1,
+    abilityList: [poisonCloud, bite, claw],
 }
 
 const deathKnight: Entity = {
@@ -874,7 +1031,7 @@ const deathKnight: Entity = {
     str: 3,
     spd: 2,
     armor: 4,
-    abilityList: actionList1,
+    abilityList: [longsword, crossbow],
 }
 
 const archWizard: Entity = {
@@ -891,7 +1048,7 @@ const archWizard: Entity = {
     str: 2,
     spd: 2,
     armor: 0,
-    abilityList: actionList1,
+    abilityList: [fireball, poisonCloud, magicBlast, dagger, petrify, dagger],
 }
 
 const frog: Entity = {
@@ -906,9 +1063,9 @@ const frog: Entity = {
     currMP: 0,
     totalMP: 0,
     str: 1,
-    spd: 1,
-    armor: 10,
-    abilityList: actionList1,
+    spd: 10,
+    armor: 15,
+    abilityList: [ultraFireballScroll, bite],
 }
 
 const enemies = [

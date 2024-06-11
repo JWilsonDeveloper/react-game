@@ -255,10 +255,425 @@ const equipment = [
   },
 ]
 
+const effectRolls = [];
+const rangeMin = 1;
+const maxQuantity = 6;
+const maxRangeMax = 12;
+// Loop through quantities from 1 to maxQuantity
+for (let quantity = 1; quantity <= maxQuantity; quantity++) {
+  // Loop through rangeMaxes from 4 to maxRangeMax in increments of 2
+  for (let rangeMax = 4; rangeMax <= maxRangeMax; rangeMax += 2) {
+    effectRolls.push({
+      rangeMin,
+      rangeMax,
+      quantity,
+    });
+  }
+}
+
+const effects = [
+  {
+    // punch and throwRock
+    effectRollId : "3f540490-3fb6-4a06-a5f3-135bec30128b",
+    effectBonus : 0,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+  {
+    // magicBlast and crossbow
+    effectRollId : "c3f7438f-c020-4f34-96b6-fc5a664b3c4f",
+    effectBonus : 2,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+  {
+    // club
+    effectRollId : "ae1b9a2d-4733-4622-b82e-2387920a4d9d",
+    effectBonus : 2,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+  {
+    // slingshot
+    effectRollId : "425a02b2-ea3c-4eed-81e5-83852f98bc45",
+    effectBonus : 1,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+  {
+    // poisonCloud
+    effectRollId : "76b9981d-a8d0-4c11-8184-ee4923b5be42",
+    effectBonus : 4,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+  {
+    // longsword
+    effectRollId : "1e9a4817-8bce-4c3c-8489-b7be845985a6",
+    effectBonus : 0,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+  {
+    // fireball and fireballScroll
+    effectRollId : "a42dd636-0d0e-4877-9089-0c130d6095eb",
+    effectBonus : 0,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+  {
+    // miniHpPotion
+    effectRollId : "425a02b2-ea3c-4eed-81e5-83852f98bc45",
+    effectBonus : 0,
+    target : 'SELF',
+    stat : 'HP',
+    statIncrease : true,
+  },
+  {
+    // miniMpPotion
+    effectRollId : "425a02b2-ea3c-4eed-81e5-83852f98bc45",
+    effectBonus : 0,
+    target : 'SELF',
+    stat : 'MP',
+    statIncrease : true,
+  },
+  {
+    // hpPotion
+    effectRollId : "e8293a19-a621-4bad-8724-12595536d349",
+    effectBonus : 0,
+    target : 'SELF',
+    stat : 'HP',
+    statIncrease : true,
+  },
+  {
+    // mpPotion
+    effectRollId : "e8293a19-a621-4bad-8724-12595536d349",
+    effectBonus : 0,
+    target : 'SELF',
+    stat : 'MP',
+    statIncrease : true,
+  },
+  {
+    // enhancedFireballScroll
+    effectRollId : "a42dd636-0d0e-4877-9089-0c130d6095eb",
+    effectBonus : 7,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+  {
+    // megaHpPotion
+    effectRollId : "a42dd636-0d0e-4877-9089-0c130d6095eb",
+    effectBonus : 0,
+    target : 'SELF',
+    stat : 'HP',
+    statIncrease : true,
+  },
+  {
+    // megaMpPotion
+    effectRollId : "a42dd636-0d0e-4877-9089-0c130d6095eb",
+    effectBonus : 0,
+    target : 'SELF',
+    stat : 'MP',
+    statIncrease : true,
+  },
+  {
+    // fireball3Scroll
+    effectRollId : "a42dd636-0d0e-4877-9089-0c130d6095eb",
+    effectBonus : 12,
+    target : 'OTHER',
+    stat : 'HP',
+    statIncrease : false,
+  },
+]
+
+const skillBonuses = [
+  {
+    skill: "SPD",
+    multiplier: 1,
+    type: "SUCCESS",
+  },
+  {
+    skill: "STR",
+    multiplier: 1,
+    type: "SUCCESS",
+  },
+  {
+    skill: "SPD",
+    multiplier: 1,
+    type: "EFFECT",
+  },
+  {
+    skill: "STR",
+    multiplier: 1,
+    type: "EFFECT",
+  },
+  {
+    skill: "SPD",
+    multiplier: 2,
+    type: "SUCCESS",
+  },
+  {
+    skill: "STR",
+    multiplier: 2,
+    type: "SUCCESS",
+  },
+  {
+    skill: "SPD",
+    multiplier: 2,
+    type: "EFFECT",
+  },
+  {
+    skill: "STR",
+    multiplier: 2,
+    type: "EFFECT",
+  },
+]
+
+const actions = [
+  {
+    name: "Punch",
+    type: 'MELEE',
+    slot: 0,
+    tier: 0,
+    skillBonusId: "c531bfcf-16fb-40f3-8198-c84bdc05d6ad",
+    successBonus: 1,
+    mpCost: 0,
+    cost: 0,
+    effectId: "3c3b0a10-db51-4231-9cd2-f4613324585c",
+  },
+  {
+    name: "Throw Rock",
+    type: 'RANGED',
+    slot: 1,
+    tier: 0,
+    skillBonusId: "5e6d29f2-68b4-4e7a-903f-e7c602655849",
+    successBonus: 1,
+    mpCost: 0,
+    cost: 0,
+    effectId: "3c3b0a10-db51-4231-9cd2-f4613324585c",
+  },
+  {
+    name: "Magic Blast",
+    type: 'SPELL',
+    slot: 2,
+    tier: 0,
+    successBonus: 2,
+    mpCost: 3,
+    cost: 0,
+    effectId: "24f03e39-16ca-4927-846d-635696272e21",
+  },
+  {
+    name: "Club",
+    type: 'MELEE',
+    slot: 0,
+    tier: 1,
+    skillBonusId: "5e6d29f2-68b4-4e7a-903f-e7c602655849",
+    successBonus: 2,
+    mpCost: 0,
+    cost: 1,
+    effectId: "4789c706-a0c8-4dc7-a1cd-ade3aac3cd98",
+  },
+  {
+    name: "Slingshot",
+    type: 'RANGED',
+    slot: 1,
+    tier: 1,
+    skillBonusId: "c531bfcf-16fb-40f3-8198-c84bdc05d6ad",
+    successBonus: 2,
+    mpCost: 0,
+    cost: 1,
+    effectId: "cbd32900-0546-43d9-8c3b-60ee1cc6ffc0",
+  },
+  {
+    name: "Poison Cloud",
+    type: 'SPELL',
+    slot: 2,
+    tier: 1,
+    successBonus: 4,
+    mpCost: 4,
+    cost: 1,
+    effectId: "3a514f60-c444-4de5-8ddc-5ecb85bc363f",
+  },
+  {
+    name: "Longsword",
+    type: 'MELEE',
+    slot: 0,
+    tier: 2,
+    skillBonusId: "5e6d29f2-68b4-4e7a-903f-e7c602655849",
+    successBonus: 3,
+    mpCost: 0,
+    cost: 3,
+    effectId: "118a9a77-9052-4af8-8486-d9516ba7d2c2",
+  },
+  {
+    name: "Crossbow",
+    type: 'RANGED',
+    slot: 1,
+    tier: 2,
+    skillBonusId: "c531bfcf-16fb-40f3-8198-c84bdc05d6ad",
+    successBonus: 1,
+    mpCost: 0,
+    cost: 3,
+    effectId: "24f03e39-16ca-4927-846d-635696272e21",
+  },
+  {
+    name: "Fireball",
+    type: 'SPELL',
+    slot: 2,
+    tier: 2,
+    successBonus: 6,
+    mpCost: 6,
+    cost: 3,
+    effectId: "71151915-ab43-4525-bef4-feb655e935e3",
+  },
+  {
+    name: "Run Away",
+    type: 'FLEE',
+    slot: 3,
+    tier: 0,
+    skillBonusId: "d0a9dbc2-f46c-43d3-9c89-4531fbb65365",
+    successBonus: 1,
+    cost: 0,
+    mpCost: 0,
+  },
+  {
+    name: "Stealthy Escape",
+    type: 'FLEE',
+    slot: 3,
+    tier: 1,
+    skillBonusId: "c531bfcf-16fb-40f3-8198-c84bdc05d6ad",
+    successBonus: 2,
+    cost: 1,
+    mpCost: 0,
+  },
+  {
+    name: "Escape On Steed",
+    type: 'FLEE',
+    slot: 3,
+    tier: 2,
+    skillBonusId: "c531bfcf-16fb-40f3-8198-c84bdc05d6ad",
+    successBonus: 4,
+    cost: 2,
+    mpCost: 0,
+  },
+  {
+    name: "Mini HP Potion",
+    type: "HP Potion",
+    slot: 5,
+    tier: 0,
+    successBonus: 0,
+    mpCost: 0,
+    cost: 6,
+    effectId: "4c2d59b7-b30e-48da-bef6-79b18045e75a",
+    uses : 1,
+  },
+  {
+    name: "Mini MP Potion",
+    type: "MP Potion",
+    slot: 5,
+    tier: 0,
+    successBonus: 1,
+    mpCost: 0,
+    cost: 3,
+    effectId: "a429d867-0c34-4593-84e7-71831c10faba",
+    uses : 1,
+  },
+  {
+    name: "Fireball Scroll",
+    type: "Scroll",
+    slot: 5,
+    tier: 0,
+    successBonus: 6,
+    mpCost: 0,
+    cost: 8,
+    effectId: "71151915-ab43-4525-bef4-feb655e935e3",
+    uses : 1,
+  },
+  {
+    name: "HP Potion",
+    type: "HP Potion",
+    slot: 5,
+    tier: 1,
+    successBonus: 0,
+    mpCost: 0,
+    cost: 15,
+    effectId: "a4250e30-26c3-4eae-ad51-8565e169a876",
+    uses : 1,
+  },
+  {
+    name: "MP Potion",
+    type: "MP Potion",
+    slot: 5,
+    tier: 1,
+    successBonus: 0,
+    mpCost: 0,
+    cost: 8,
+    effectId: "7e62b9a4-456e-4a30-8edf-6f84a66ce5a0",
+    uses : 1,
+  },
+  {
+    name: "Enhanced Fireball Scroll",
+    type: "Scroll",
+    slot: 5,
+    tier: 1,
+    successBonus: 6,
+    mpCost: 0,
+    cost: 20,
+    effectId: "3b3ca591-1692-49b5-9ff4-bf0bd576d3b0",
+    uses : 1,
+  },
+  {
+    name: "Mega HP Potion",
+    type: "HP Potion",
+    slot: 5,
+    tier: 2,
+    successBonus: 0,
+    mpCost: 0,
+    cost: 35,
+    effectId: "9d1facb6-71da-466e-9e7d-6acfbc226acc",
+    uses : 1,
+  },
+  {
+    name: "Mega MP Potion",
+    type: "MP Potion",
+    slot: 5,
+    tier: 2,
+    successBonus: 0,
+    mpCost: 0,
+    cost: 20,
+    effectId: "16b1f7d1-b2c3-40e0-b784-908ca9f3adee",
+    uses : 1,
+  },
+  {
+    name: "Ultra Fireball Scroll",
+    type: "Scroll",
+    slot: 5,
+    tier: 2,
+    successBonus: 8,
+    mpCost: 0,
+    cost: 35,
+    effectId: "58fd4b4e-92f2-453b-9a37-326870862e86",
+    uses : 1,
+  },
+];
+
+
 module.exports = {
   users,
   customers,
   invoices,
   revenue,
   equipment,
+  effectRolls,
+  effects,
+  skillBonuses,
+  actions,
 };

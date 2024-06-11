@@ -5,6 +5,10 @@ const {
   revenue,
   users,
   equipment,
+  effectRolls,
+  effects,
+  skillBonuses,
+  actions,
 } = require('../app/lib/placeholder-data.js');
 const bcrypt = require('bcrypt');
 
@@ -58,6 +62,199 @@ async function seedEquipment(client) {
     throw error;
   }
 }
+
+async function seedEffectRolls(client) {
+  try {
+    // Ensure the uuid-ossp extension is available
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "effect_rolls" table if it doesn't exist
+    await client.sql`
+      CREATE TABLE IF NOT EXISTS effect_rolls (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        range_min INTEGER NOT NULL,
+        range_max INTEGER NOT NULL,
+        quantity INTEGER NOT NULL
+      );
+    `;
+
+    console.log(`Created "effect_rolls" table`);
+
+    // Insert data into the "effect_rolls" table
+    const insertedEffectRolls = await Promise.all(
+      effectRolls.map(
+        (effectRoll) => client.sql`
+        INSERT INTO effect_rolls (range_min, range_max, quantity)
+        VALUES (
+          ${effectRoll.rangeMin},
+          ${effectRoll.rangeMax},
+          ${effectRoll.quantity}
+        )
+        ON CONFLICT (id) DO NOTHING;
+      `
+      )
+    );
+
+    console.log(`Seeded ${insertedEffectRolls.length} effectRolls`);
+
+    return {
+      insertedEffectRolls,
+    };
+  } catch (error) {
+    console.error('Error seeding effectRolls:', error);
+    throw error;
+  }
+}
+
+async function seedEffects(client) {
+  try {
+    // Ensure the uuid-ossp extension is available
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "effects" table if it doesn't exist
+    await client.sql`
+      CREATE TABLE IF NOT EXISTS effects (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        effect_roll_id UUID REFERENCES effect_rolls(id),
+        effect_bonus INTEGER NOT NULL,
+        target VARCHAR(5) CHECK (target IN ('SELF', 'OTHER')) NOT NULL,
+        stat VARCHAR(10) CHECK (stat IN ('HP', 'MP', 'ARMOR', 'SPEED', 'STRENGTH')) NOT NULL,
+        stat_increase BOOLEAN NOT NULL
+      );
+    `;
+
+    console.log(`Created "effects" table`);
+
+    // Insert data into the "effects" table
+    const insertedEffects = await Promise.all(
+      effects.map(
+        (effect) => client.sql`
+          INSERT INTO effects (effect_roll_id, effect_bonus, target, stat, stat_increase)
+          VALUES (
+            ${effect.effectRollId},
+            ${effect.effectBonus},
+            ${effect.target},
+            ${effect.stat},
+            ${effect.statIncrease}
+          )
+          ON CONFLICT (id) DO NOTHING;
+        `
+      )
+    );
+
+    console.log(`Seeded ${insertedEffects.length} effects`);
+
+    return {
+      insertedEffects,
+    };
+  } catch (error) {
+    console.error('Error seeding effects:', error);
+    throw error;
+  }
+}
+
+async function seedSkillBonuses(client) {
+  try {
+    // Ensure the uuid-ossp extension is available
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "skill_bonuses" table if it doesn't exist
+    await client.sql`
+      CREATE TABLE IF NOT EXISTS skill_bonuses (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        skill VARCHAR(5) CHECK (skill IN ('SPD', 'STR')) NOT NULL,
+        multiplier INTEGER NOT NULL,
+        type VARCHAR(10) CHECK (type IN ('SUCCESS', 'EFFECT')) NOT NULL
+      );
+    `;
+
+    console.log(`Created "skill_bonuses" table`);
+
+    // Insert data into the "skill_bonuses" table
+    const insertedSkillBonuses = await Promise.all(
+      skillBonuses.map(
+        (skillBonus) => client.sql`
+          INSERT INTO skill_bonuses (skill, multiplier, type)
+          VALUES (
+            ${skillBonus.skill},
+            ${skillBonus.multiplier},
+            ${skillBonus.type}
+          )
+          ON CONFLICT (id) DO NOTHING;
+        `
+      )
+    );
+
+    console.log(`Seeded ${insertedSkillBonuses.length} skill bonuses`);
+
+    return {
+      insertedSkillBonuses,
+    };
+  } catch (error) {
+    console.error('Error seeding skill bonuses:', error);
+    throw error;
+  }
+}
+
+async function seedActions(client) {
+  try {
+    // Ensure the uuid-ossp extension is available
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "actions" table if it doesn't exist
+    await client.sql`
+      CREATE TABLE IF NOT EXISTS actions (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        name VARCHAR(50) NOT NULL,
+        type VARCHAR(10) CHECK (type IN ('MELEE', 'RANGED', 'SPELL', 'FLEE', 'HP Potion', 'MP Potion', 'Scroll')) NOT NULL,
+        cost INTEGER NOT NULL,
+        mp_cost INTEGER NOT NULL,
+        slot INTEGER NOT NULL,
+        tier INTEGER NOT NULL,
+        success_bonus INTEGER NOT NULL,
+        skill_bonus_id UUID REFERENCES skill_bonuses(id),
+        effect_id UUID REFERENCES effects(id),
+        uses INTEGER
+      );
+    `;
+
+    console.log(`Created "actions" table`);
+
+    // Insert data into the "actions" table
+    const insertedActions = await Promise.all(
+      actions.map(
+        (action) => client.sql`
+          INSERT INTO actions (
+            name, type, cost, mp_cost, slot, tier, success_bonus, skill_bonus_id, effect_id, uses
+          )
+          VALUES (
+            ${action.name},
+            ${action.type},
+            ${action.cost},
+            ${action.mpCost},
+            ${action.slot},
+            ${action.tier},
+            ${action.successBonus},
+            ${action.skillBonusId || null},
+            ${action.effectId || null},
+            ${action.uses || null}
+          )
+          ON CONFLICT (id) DO NOTHING;
+        `
+      )
+    );
+
+    console.log(`Seeded ${insertedActions.length} actions`);
+
+    return {
+      insertedActions,
+    };
+  } catch (error) {
+    console.error('Error seeding actions:', error);
+    throw error;
+  }
+}
+
 
 
 async function seedUsers(client) {
@@ -216,11 +413,15 @@ async function seedRevenue(client) {
 async function main() {
   const client = await db.connect();
 
-  await seedUsers(client);
-  await seedCustomers(client);
-  await seedInvoices(client);
-  await seedRevenue(client);
-  await seedEquipment(client);
+  //await seedUsers(client);
+  //await seedCustomers(client);
+  //await seedInvoices(client);
+  //await seedRevenue(client);
+  //await seedEquipment(client);
+  //await seedEffectRolls(client);
+  //await seedSkillBonuses(client);
+  //await seedEffects(client);
+  //await seedActions(client);
 
   await client.end();
 }

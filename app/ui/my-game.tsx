@@ -1,3 +1,5 @@
+'use client'
+
 import { Action, Player, Entity, Equipment } from '../lib/definitions';
 import Adventure from '@/app/ui/adventure';
 import Leveling from '@/app/ui/leveling';
@@ -7,6 +9,7 @@ import Message from '@/app/ui/message';
 import Shop from '@/app/ui/shopping';
 import XPBar from '@/app/ui/xp-bar';
 import Rules from './rules';
+import AbilityTable from '@/app/ui/ability-table';
 
 interface MyGameProps {
     basePlayer : Player;
@@ -71,7 +74,7 @@ export default function MyGame({ basePlayer, enemies, items, moves, equipment}: 
 
     function levelUp(levels : number){
         const baseSkills: number[] = [1, 2, 3, 4, 5, 6];
-        const baseHPs: number[] = [15, 25, 35, 60, 85, 120];
+        const baseHPs: number[] = [15, 25, 40, 60, 85, 120];
         const baseMPs: number[] = [6, 9, 15, 24, 36, 51];
 
         const oldIndex = player.level - 1;
@@ -169,6 +172,21 @@ export default function MyGame({ basePlayer, enemies, items, moves, equipment}: 
                         </div>
                 </div>
             }
+            {/*
+            {enemies.map(enemy => (
+                <div key={enemy.id}>
+                    <h1 className='text-white'>{enemy.name}</h1>
+                    <AbilityTable
+                        actions={[...enemy.abilityList]}
+                        actionClicked={() => {}}
+                        entity={enemy}
+                        getTier={getTier}
+                        showCost={false}
+                        adventuring={true}
+                    />
+                </div>
+            ))}
+        */}
         </div>
     );
 }

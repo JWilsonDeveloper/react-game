@@ -118,12 +118,17 @@ interface AdventureProps {
                     tempOther.currHP += effect;
                 } else if (actionEffect.stat === 'MP') {
                     tempOther.currMP += effect;
+                } else if (actionEffect.stat === 'SPEED') {
+                    tempOther.spd += effect;
                 }
             } else {
                 if (actionEffect.stat === 'HP') {
                     tempSelf.currHP += effect;
                 } else if (actionEffect.stat === 'MP') {
                     tempSelf.currMP += effect;
+                }
+                else if (actionEffect.stat === 'SPEED') {
+                    tempSelf.spd += effect;
                 }
             }
             if (isPlayer) {
