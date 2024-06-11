@@ -11,8 +11,11 @@ export default async function Page() {
   const abilities = actions.filter(action => action.type === "MELEE" || action.type === "RANGED" || action.type ===  "SPELL" || action.type === "FLEE");
   const enemies = await getEnemies();
   enemies.forEach(element => {
-    console.log(element.name);
-    console.log(element.abilityList);
+    if(element.name === "Dragon"){
+      element.abilityList.forEach(ability => {
+        console.log(ability);
+      });
+    }
   });
 
   const actionList0 : Action[] = [actions[0], actions[1], actions[2], actions[9]];

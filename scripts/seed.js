@@ -526,7 +526,7 @@ async function main() {
   //await seedEffects(client);
   //await seedActions(client);
   //await seedEnemies(client);
-  //await seedAbilityListsActions(client);
+  await seedAbilityListsActions(client);
 
   await client.end();
 }

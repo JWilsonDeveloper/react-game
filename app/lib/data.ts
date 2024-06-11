@@ -331,6 +331,7 @@ export async function getEnemies() {
     // Loop through each enemy data
     for (const enemy of data.rows) {
       try {
+
         // Fetch the actions associated with the enemy's ability list
         const abilityList = await getActionsByAbilityListId(enemy.ability_list_id);
 

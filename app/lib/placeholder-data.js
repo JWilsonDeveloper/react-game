@@ -779,7 +779,29 @@ const actions = [
     effectId: "58fd4b4e-92f2-453b-9a37-326870862e86",
     uses : 1,
   },
-  */
+  {
+    name: "Devour",
+    type: 'MELEE',
+    slot: 0,
+    tier: 0,
+    skillBonusId: "0e609e45-e3d7-456d-bf7a-68bf90905c0f",
+    successBonus: 5,
+    mpCost: 0,
+    cost: 0,
+    effectId: "4789c706-a0c8-4dc7-a1cd-ade3aac3cd98",
+  },
+  {
+    name: "Eviscerate",
+    type: 'MELEE',
+    slot: 0,
+    tier: 0,
+    skillBonusId: "5e6d29f2-68b4-4e7a-903f-e7c602655849",
+    successBonus: 6,
+    mpCost: 0,
+    cost: 0,
+    effectId: "222920d4-0432-4ecf-a4f4-04ba5cc95735",
+  },
+   */
 ];
 
 const enemies = [
@@ -1113,13 +1135,13 @@ const abilityListsActions = [
     abilityListId : "a507e521-24c7-4ff2-bd5c-b3ebc09d1eae",
     actionId : "eb56b726-073d-4079-a03c-248bf3161adc",
   }, 
-  { // Dragon Bite
+  { // Dragon Devour
     abilityListId : "a507e521-24c7-4ff2-bd5c-b3ebc09d1eae",
-    actionId : "c6d41962-140c-455e-88ed-81fbd879a3de",
+    actionId : "f4e65de6-3cd2-41d6-b64a-ee7573cae774",
   }, 
-  { // Dragon Claw
+  { // Dragon Eviscerate
     abilityListId : "a507e521-24c7-4ff2-bd5c-b3ebc09d1eae",
-    actionId : "75261b4e-5c5a-4e50-a4a9-1c0219c1d79d",
+    actionId : "43420789-8fe1-4e2a-a175-8e825ff12fcd",
   }, 
   { // Death Knight Longsword
     abilityListId : "40490850-93a9-473b-9941-7089f1ad648a",
