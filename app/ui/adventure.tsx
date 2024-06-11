@@ -284,7 +284,7 @@ interface AdventureProps {
 
         // Print messages
         setMsg(tempMsg);
-        console.log(tempMsg);
+        //console.log(tempMsg);
     }
 
     function getEnemy() {
