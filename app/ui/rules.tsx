@@ -21,7 +21,7 @@ export default function Rules({}: RulesProps) {
                         <section className="mb-2">
                             <p className="text-sm md:text-base text-gray-700">
                                 Defeat your opponent in battle by reducing its hit points <strong>(HP)</strong> to 0. 
-                                Alternatively, attempt to escape without receiving XP or GP. 
+                                Alternatively, you can attempt to escape, but you will not gain XP or GP. 
                                 If your HP is reduced to 0, you are defeated and lose the game.
                             </p>
                         </section>
@@ -139,7 +139,7 @@ export default function Rules({}: RulesProps) {
                     <section className="mb-2">
                         {/* Detailed rules about items vs equipment go here */}
                         <p><strong>Items</strong> have a limited number of uses, and they count as an action when selected.</p>
-                        <p><strong>Equipment</strong> cannot be selected as an action, but it has a persistent effect on stats, such as increasing your armor or HP.</p>
+                        <p><strong>Equipment</strong> cannot be selected as an action, but each equipment has a persistent effect on stats, such as increasing your armor or HP.</p>
                     </section>
                 </section>
                 <section className="mb-6">
