@@ -10,6 +10,10 @@ export default async function Page() {
   const items = actions.filter(action => action.type === "HP Potion" || action.type === "MP Potion" || action.type === "Scroll");
   const abilities = actions.filter(action => action.type === "MELEE" || action.type === "RANGED" || action.type ===  "SPELL" || action.type === "FLEE");
   const enemies = await getEnemies();
+  enemies.forEach(element => {
+    console.log(element.name);
+    console.log(element.abilityList);
+  });
 
   const actionList0 : Action[] = [actions[0], actions[1], actions[2], actions[9]];
   const itemList0 : Action[] = [{...items[0]}];

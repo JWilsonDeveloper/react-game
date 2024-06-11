@@ -1012,6 +1012,7 @@ const enemies = [
 ]
 
 const abilityListsActions = [
+  /*
   { // Zombie Punch
     abilityListId : "4eb296b1-42dc-46c8-bca9-f83cfc3e1d10",
     actionId : "58089a62-dcdc-4cb2-929d-1a18e5430cd4",
@@ -1156,6 +1157,7 @@ const abilityListsActions = [
     abilityListId : "66a79200-047a-416b-91e3-915e36e16347",
     actionId : "c6d41962-140c-455e-88ed-81fbd879a3de",
   }, 
+  */
 ]
 
 module.exports = {

@@ -249,12 +249,12 @@ export async function getAction(actionId : number) {
         name, 
         type, 
         cost, 
-        mp_cost AS mpCost, 
+        mp_cost, 
         slot, 
         tier, 
-        success_bonus AS successBonus, 
-        skill_bonus_id AS skillBonusId, 
-        effect_id AS effectId, 
+        success_bonus, 
+        skill_bonus_id, 
+        effect_id, 
         uses 
       FROM actions
       WHERE id = ${actionId};
@@ -265,17 +265,17 @@ export async function getAction(actionId : number) {
     }
 
     const row = data.rows[0];
-    const skillBonus = row.skillBonusId ? await getSkillBonus(row.skillBonusId) : null;
-    const effect = row.effectId ? await getEffect(row.effectId) : null;
+    const skillBonus = row.skill_bonus_id ? await getSkillBonus(row.skill_bonus_id) : null;
+    const effect = row.effect_id ? await getEffect(row.effect_id) : null;
     const action : Action = {
       id: row.id,
       name: row.name,
       type: row.type,
       cost: row.cost,
-      mpCost: row.mpCost,
+      mpCost: row.mp_cost,
       slot: row.slot,
       tier: row.tier,
-      successBonus: row.successBonus,
+      successBonus: row.success_bonus,
       skillBonus: skillBonus || undefined,
       effect: effect || undefined,
       uses: row.uses
