@@ -1136,11 +1136,11 @@ const abilityListsActions = [
     actionId : "eb56b726-073d-4079-a03c-248bf3161adc",
   }, 
   { // Dragon Devour
-    abilityListId : "a507e521-24c7-4ff2-bd5c-b3ebc09d1eae",
+    abilityListId : "d2b0770a-663b-4fa1-bff5-768c0a0b7c80",
     actionId : "f4e65de6-3cd2-41d6-b64a-ee7573cae774",
   }, 
   { // Dragon Eviscerate
-    abilityListId : "a507e521-24c7-4ff2-bd5c-b3ebc09d1eae",
+    abilityListId : "d2b0770a-663b-4fa1-bff5-768c0a0b7c80",
     actionId : "43420789-8fe1-4e2a-a175-8e825ff12fcd",
   }, 
   { // Death Knight Longsword
